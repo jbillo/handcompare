@@ -68,6 +68,18 @@ class Hand():
     def get_rank(self):
         return self.rank
 
+    # helper: return values of cards; list will be sorted
+    def get_card_values(self):
+        card_values = []
+        for card in self.cards:
+            card_values.append(card.get_value())
+
+        return card_values
+
+    # helper: return unique card values in a set
+    def get_unique_card_values(self):
+        return set(self.get_card_values())
+
     def sort_cards(self):
         # Using the object representation, Python's built in sorted() function
         # will ensure the cards get sorted by value, then suit.
@@ -117,9 +129,7 @@ class Hand():
         pass
 
     def set_rank_by_values(self):
-        card_values = []
-        for card in self.cards:
-            card_values.append(card.get_value())
+        card_values = self.get_card_values()
 
         # reverse the card values for easier forward comparison with other Hand objects
         card_values.sort(reverse=True)
@@ -128,7 +138,7 @@ class Hand():
 
     def check_straight_flush(self):
         # definition: five cards in sequence, all of same suit
-        if not self.cards or not len(self.cards) == 5:
+        if not self.cards or not len(self.cards) == self.MAXIMUM_CARDS:
             return False
 
         # check if all cards are same suit - reuse flush code
@@ -140,16 +150,14 @@ class Hand():
 
     def check_four_of_a_kind(self):
         # definition: four cards, any suit, same value
-        if not self.cards or not len(self.cards) == 5:
+        if not self.cards or not len(self.cards) == self.MAXIMUM_CARDS:
             return False
 
-        card_values = []
-        for card in self.cards:
-            card_values.append(card.get_value())
+        card_values = self.get_card_values()
 
         # Check unique values of cards, then the count of each
         # Worst case: 5 unique cards
-        unique_values = set(card_values)
+        unique_values = self.get_unique_card_values()
         for value in unique_values:
             if card_values.count(value) == 4:
                 # In 4 of a kind, we only have one distinct ranking option (the remaining
@@ -166,15 +174,13 @@ class Hand():
 
     def check_full_house(self):
         # definition: three matching cards of one value + two matching cards of another
-        if not self.cards or not len(self.cards) == 5:
+        if not self.cards or not len(self.cards) == self.MAXIMUM_CARDS:
             return False
 
-        card_values = []
-        for card in self.cards:
-            card_values.append(card.get_value())
+        card_values = self.get_card_values()
 
         # check that we have two unique card values only to fail quickly
-        unique_values = set(card_values)
+        unique_values = self.get_unique_card_values()
         if len(unique_values) != 2:
             return False
 
@@ -197,8 +203,7 @@ class Hand():
     def check_flush(self):
         # definition: all cards same suit, high card wins
         # this means we have to drop the entire sequence into rank
-
-        if not self.cards or not len(self.cards) == 5:
+        if not self.cards or not len(self.cards) == self.MAXIMUM_CARDS:
             return False
 
         # drop suits into a set to enforce uniqueness
@@ -220,7 +225,7 @@ class Hand():
     def check_straight(self):
         # condition 1: ace low (A = 1) - will appear as exactly 2, 3, 4, 5, 14 in values
         # condition 2: normal, no aces or ace high (A = 14)
-        if not self.cards or not len(self.cards) == 5:
+        if not self.cards or not len(self.cards) == self.MAXIMUM_CARDS:
             return False
 
         # we can test explicitly for condition 1:
@@ -259,11 +264,8 @@ class Hand():
         if not self.cards or not len(self.cards) == self.MAXIMUM_CARDS:
             return False
 
-        card_values = []
-        for card in self.cards:
-            card_values.append(card.get_value())
-
-        unique_values = set(card_values)
+        card_values = self.get_card_values()
+        unique_values = self.get_unique_card_values()
         for value in unique_values:
             if card_values.count(value) >= n:
                 self.multiple = value
@@ -279,6 +281,80 @@ class Hand():
         if not self.cards or not len(self.cards) == self.MAXIMUM_CARDS:
             return False
 
+        unique_values = self.get_unique_card_values()
+
+        if len(unique_values) < 2:
+            # must have at least 2 unique values for two pair
+            return False
+
+        if len(unique_values) > (self.MAXIMUM_CARDS - 2):
+            # cannot have more than 3 unique values for two pair
+            return False
+
+        # For each unique value, check that there is at least 2 of a kind for 2 of them
+        pairs = self.get_pairs()
+
+        # Can't have three pair or one pair - consistency check
+        if not pairs or len(pairs) != 2:
+            return False
+
+        # Which is the highest pair? This becomes the 'multiple' property
+        # Then the other pair, followed by highest card, goes into rank
+        pairs.sort(reverse=True)
+        self.multiple = pairs[0]
+        self.rank = [pairs[1]]
+
+        # If we have a third value (fifth card), append it to the rank
+        # As there will only be one card left, we can use the unique set and just
+        # add one value to the end.
+        unique_values.remove(self.multiple)
+        unique_values.remove(self.rank[0])
+        if len(unique_values) != 0:
+            self.rank.append(unique_values.pop())
+
         return True
 
+    def get_pairs(self):
+        if not self.cards or not len(self.cards) == self.MAXIMUM_CARDS:
+            return False
+
+        card_values = self.get_card_values()
+        unique_values = self.get_unique_card_values()
+
+        if len(unique_values) == self.MAXIMUM_CARDS:
+            # must have at least one duplicate value in the hand
+            return False
+
+        pairs = []
+        for value in unique_values:
+            if card_values.count(value) >= 2:       # pair also satisfied by n-of-kind
+                pairs.append(value)
+
+        return pairs
+
+    def check_pair(self):
+        if not self.cards or not len(self.cards) == self.MAXIMUM_CARDS:
+            return False
+
+        unique_values = self.get_unique_card_values()
+        card_values = self.get_card_values()
+
+        pairs = self.get_pairs()
+        if not pairs or len(pairs) < 1:
+            return False
+
+        # TODO: at this point, we could still have two pairs; decide how to handle
+
+        # Take first pair as multiple
+        self.multiple = pairs[0]
+
+        # Remove known pair from unique list of values
+        unique_values.remove(self.multiple)
+
+        # Set rank with rest of card values, sorted by reverse order
+        rank_values = list(unique_values)
+        rank_values.sort(reverse=True)
+        self.rank = rank_values
+
+        return True
 

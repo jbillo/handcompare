@@ -2,6 +2,10 @@
 
 """
 test_handcompare
+
+Unit testing module for the poker hand comparison application
+
+Jake Billo <jake@jakebillo.com>
 """
 
 import unittest
@@ -74,6 +78,8 @@ class TestHandCompare(unittest.TestCase):
             "99X",
             "100H",
             "100X",
+            "--",
+            "0-",
         ]
 
         for invalid_card in invalid_cards:
@@ -89,7 +95,7 @@ class TestHandCompare(unittest.TestCase):
 
         # Given two hands, ensure an InvalidHandError is thrown if they contain
         # any of the exact same cards
-        for value in range (2, 7):
+        for value in range(2, 7):
             hand1.add_card(card.Card(value, "D"))
 
         hand2.add_card(card.Card(2, "D"))
@@ -159,6 +165,21 @@ class TestHand(unittest.TestCase):
         self.hand.add_card(card.Card(4, "S"))
         self.hand.add_card(card.Card(5, "H"))
         self.hand.add_card(card.Card(7, "D"))
+
+    def set_full_house(self):
+        self.hand.clear()
+        for card_suit in ["C", "D", "H"]:
+            self.hand.add_card(card.Card("A", card_suit))
+        self.hand.add_card(card.Card("K", "H"))
+        self.hand.add_card(card.Card("K", "S"))
+
+    def set_three_of_a_kind(self):
+        self.hand.clear()
+        self.hand.add_card(card.Card(3, "D"))
+        self.hand.add_card(card.Card(3, "C"))
+        self.hand.add_card(card.Card(3, "S"))
+        self.hand.add_card(card.Card(4, "H"))
+        self.hand.add_card(card.Card(5, "D"))
 
     def test_clear(self):
         # ensure there are no cards in the hand after a clear operation
@@ -279,23 +300,14 @@ class TestHand(unittest.TestCase):
         self.assertEqual(self.hand.get_rank()[0], 3)
 
         # Check with only three of a kind
-        self.hand.clear()
-        self.hand.add_card(card.Card(3, "D"))
-        self.hand.add_card(card.Card(3, "C"))
-        self.hand.add_card(card.Card(3, "S"))
-        self.hand.add_card(card.Card(4, "H"))
-        self.hand.add_card(card.Card(5, "D"))
+        self.set_three_of_a_kind()
         self.assertFalse(self.hand.check_four_of_a_kind())
 
     def test_full_house(self):
         self.hand.clear()
         self.assertFalse(self.hand.check_full_house())
 
-        for card_suit in ["C", "D", "H"]:
-            self.hand.add_card(card.Card("A", card_suit))
-        self.hand.add_card(card.Card("K", "H"))
-        self.hand.add_card(card.Card("K", "S"))
-
+        self.set_full_house()
         self.assertTrue(self.hand.check_full_house())
 
         # Check rank and multiple values here as well
@@ -371,11 +383,7 @@ class TestHand(unittest.TestCase):
         self.assertFalse(self.hand.check_three_of_a_kind())
 
         # check three of a kind hand
-        self.hand.add_card(card.Card(3, "D"))
-        self.hand.add_card(card.Card(3, "C"))
-        self.hand.add_card(card.Card(3, "S"))
-        self.hand.add_card(card.Card(4, "H"))
-        self.hand.add_card(card.Card(5, "D"))
+        self.set_three_of_a_kind()
         self.assertTrue(self.hand.check_three_of_a_kind())
 
         # check rank and multiple
@@ -394,6 +402,69 @@ class TestHand(unittest.TestCase):
         self.hand.add_card(card.Card(9, "H"))
         self.hand.add_card(card.Card("K", "D"))
         self.assertTrue(self.hand.check_two_pair())
+
+        # check multiple and rank
+        self.assertEqual(self.hand.get_multiple(), 9)
+        self.assertEqual(self.hand.get_rank(), [8, 13])
+
+        # check one pair hand - should be false
+        self.hand.clear()
+        self.hand.add_card(card.Card(8, "D"))
+        self.hand.add_card(card.Card(8, "C"))
+        self.hand.add_card(card.Card(10, "S"))
+        self.hand.add_card(card.Card("J", "H"))
+        self.hand.add_card(card.Card("K", "D"))
+        self.assertFalse(self.hand.check_two_pair())
+
+        # check full house hand
+        self.set_full_house()
+        self.assertTrue(self.hand.check_two_pair())
+
+        # check multiple
+        self.assertEqual(self.hand.get_multiple(), 14)
+
+        """
+        Limitation: get_rank() will only return a one-element list for a full house,
+        whereas the second element in this example (AAAKK) should be the remaining
+        ace card (numerical value of 14). We could account for this, but the compare
+        condition will never be encountered; a full house always beats two pair and
+        when comparing two full houses, the 3-up card will be taken as the multiple.
+        """
+        #self.assertEqual(self.hand.get_rank(), [13, 14])
+        # workaround - don't include last A card:
+        self.assertEqual(self.hand.get_rank(), [13])
+
+
+    def test_pair(self):
+        # check empty hand
+        self.hand.clear()
+        self.assertFalse(self.hand.check_two_pair())
+
+        # check one pair hand
+        self.hand.add_card(card.Card("J", "D"))
+        self.hand.add_card(card.Card("J", "C"))
+        self.hand.add_card(card.Card(9, "S"))
+        self.hand.add_card(card.Card(8, "H"))
+        self.hand.add_card(card.Card(7, "D"))
+        self.assertTrue(self.hand.check_pair())
+
+        # check multiple and rank for pair
+        self.assertEqual(self.hand.get_multiple(), 11)
+        self.assertEqual(self.hand.get_rank(), [9, 8, 7])
+
+        # check three of a kind hand
+        self.set_three_of_a_kind()
+        self.assertTrue(self.hand.check_pair())
+
+        # check multiple and rank for pair
+        self.assertEqual(self.hand.get_multiple(), 3)
+
+        """
+        We run into the same limitation as two pair: both two pair and three of a kind
+        will have different rank patterns not caught by this function. Again, provided
+        that we always run in descending order of hand types, comparison will succeed.
+        """
+
 
 if __name__ == '__main__':
     unittest.main()
