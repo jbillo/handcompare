@@ -23,6 +23,10 @@ class Card():
         # For sorting purposes, always use value first and then suit; return a tuple
         return repr((self.value, self.suit))
 
+    def __eq__(self, card):
+        # Equality operator. Check if value and suit match.
+        return (self.value == card.get_value() and self.suit == card.get_suit())
+
     def _map_card_value(self, card):
         # check if card is an integer; if not, catch exception and return predefined value
         try:

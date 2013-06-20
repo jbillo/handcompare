@@ -69,6 +69,20 @@ class HandCompare():
 
         return create_hand
 
+    def hand_sanity(self, hand1, hand2):
+        # check that hands do not contain the same cards
+        # the hand itself ensures uniqueness, but compare against each other
+        h1_cards = hand1.get_cards()
+        h2_cards = hand2.get_cards()
+
+        # use __eq__ method to check card equality
+        for card in h1_cards:
+            for comp_card in h2_cards:
+                if card == comp_card:
+                    raise InvalidHandError("Same card ({0}) exists in both hands".format(card))
+
+        return True
+
     def start(self):
         pass
 

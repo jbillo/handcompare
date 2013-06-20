@@ -11,8 +11,21 @@ class MaximumCardError(Exception):
 
 class Hand():
     cards = []
+
+    # type: hand type (flush, straight, pair, etc...)
     type = 0
+
+    # rank: rank of winning hand (straight = highest card value; could be a tuple)
     rank = 0
+
+    # multiple: in pair+ situations, contains the value of pair+s (3x 8's = 8)
+    multiple = 0
+
+    # Perform the following technique for ranking:
+    # winning hand is greater of type
+    # if type is equal, winning hand is greater multiple
+    # if multiple is equal, winning hand is > rank (may be list or tuple)
+    # if rank is equal, hands are a draw
 
     MAXIMUM_CARDS = 5
 
@@ -35,13 +48,25 @@ class Hand():
     def __init__(self):
         return self.clear()
 
+    # TODO: implement general comparison operators (gt, lt, (eq?))
+
     # helper to clear hand of all cards
     def clear(self):
         self.cards = []
         self.rank = 0
+        self.multiple = 0
 
     def get_cards(self):
         return self.cards
+
+    def get_type(self):
+        return self.type
+
+    def get_multiple(self):
+        return self.multiple
+
+    def get_rank(self):
+        return self.rank
 
     def sort_cards(self):
         # Using the object representation, Python's built in sorted() function
@@ -132,8 +157,63 @@ class Hand():
 
         # This is a straight. The rank is the last element in the list (highest card)
         # Royal flush will bubble to the top - the ace will be in there as card[4]
+        self.multiple = prev_value
         self.rank = self.cards[4].get_value()
         return True
 
     def check_four_of_a_kind(self):
-        pass
+        # definition: four cards, any suit, same value
+        if not self.cards or not len(self.cards) == 5:
+            return False
+
+        card_values = []
+
+        for card in self.cards:
+            card_values.append(card.get_value())
+
+        # Check unique values of cards, then the count of each
+        # Worst case: 5 unique cards
+        unique_values = set(card_values)
+        for value in unique_values:
+            if card_values.count(value) == 4:
+                # In 4 of a kind, we only have one distinct ranking option (the remaining
+                # card.)
+                # TODO:
+                # For the "N of a kind" case, elements will have to be ranked in a list
+                # and then compared in descending order.
+                unique_values.remove(value) # in 4 of a kind, this leaves one element
+                self.multiple = value
+                self.rank = unique_values.pop()
+                return True
+
+        return False
+
+    def check_full_house(self):
+        # definition: three matching cards of one value + two matching cards of another
+        if not self.cards or not len(self.cards) == 5:
+            return False
+
+        card_values = []
+        for card in self.cards:
+            card_values.append(card.get_value())
+
+        # check that we have two unique card values only to fail quickly
+        unique_values = set(card_values)
+        if len(unique_values) != 2:
+            return False
+
+        # check occurrences: 3x one value, 2x other value
+        unique_value_test = list(unique_values)
+        value1 = unique_value_test[0]
+        value2 = unique_value_test[1]
+
+        if (card_values.count(value1) == 3 and card_values.count(value2) == 2):
+            self.multiple = value1
+            self.rank = value2
+            return True
+        elif (card_values.count(value1) == 2 and card_values.count(value2) == 3):
+            self.multiple = value2
+            self.rank = value1
+            return True
+
+        return False

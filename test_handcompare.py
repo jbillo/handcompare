@@ -12,7 +12,6 @@ import hand
 import sys
 
 class TestHandCompare(unittest.TestCase):
-
     def setUp(self):
         self.hc = handcompare.HandCompare()
         self.hand = hand.Hand()
@@ -84,6 +83,18 @@ class TestHandCompare(unittest.TestCase):
         for valid_card in valid_cards:
             self.assertTrue(self.hc.parse_card_string(valid_card))
 
+    def test_hand_sanity(self):
+        hand1 = hand.Hand()
+        hand2 = hand.Hand()
+
+        # Given two hands, ensure an InvalidHandError is thrown if they contain
+        # any of the exact same cards
+        for value in range (2, 7):
+            hand1.add_card(card.Card(value, "D"))
+
+        hand2.add_card(card.Card(2, "D"))
+        # At this point H1 has 2-6 of diamonds and hand2 has 2 of diamonds
+        self.assertRaises(handcompare.InvalidHandError, self.hc.hand_sanity, hand1, hand2)
 
 class TestCardValue(unittest.TestCase):
     def setUp(self):
@@ -119,6 +130,19 @@ class TestCardValue(unittest.TestCase):
         for invalid_suit in ["X", " ", "", 0, None]:
             self.assertFalse(self.card._check_card_suit(invalid_suit))
 
+    def test_check_card_equal(self):
+        # check not equal for different suits
+        card1 = card.Card(2, "H")
+        card2 = card.Card(2, "C")
+        self.assertNotEqual(card1, card2)
+
+        # check not equal for different values
+        card2 = card.Card(3, "H")
+        self.assertNotEqual(card1, card2)
+
+        # check equal for same values
+        card2 = card.Card(2, "H")
+        self.assertEqual(card1, card2)
 
 class TestHand(unittest.TestCase):
     def setUp(self):
@@ -208,12 +232,16 @@ class TestHand(unittest.TestCase):
         # check that we have a straight flush with 8-Q
         self.assertTrue(self.hand.check_straight_flush())
 
+        # TODO: check multiple and rank
+
         # check that A-5 (condition 2) also counts as a straight flush
         self.hand.clear()
         for card_value in range(2, 6):  # 2, 3, 4, 5
             self.hand.add_card(card.Card(card_value, "D"))
         self.hand.add_card(card.Card("A", "D"))
         self.assertTrue(self.hand.check_straight_flush())
+
+        # TODO: check multiple and rank
 
         # check that an explicit royal flush counts as a straight flush
         self.hand.clear()
@@ -223,6 +251,61 @@ class TestHand(unittest.TestCase):
         self.hand.add_card(card.Card("K", "H"))
         self.hand.add_card(card.Card("A", "H"))
         self.assertTrue(self.hand.check_straight_flush())
+
+    def test_four_of_a_kind(self):
+        self.hand.clear()
+        for card_suit in ["C", "D", "H", "S"]:
+            self.hand.add_card(card.Card(2, card_suit))
+
+        # At this point we should get a false, since there are only 4 cards
+        self.assertFalse(self.hand.check_four_of_a_kind())
+
+        self.hand.add_card(card.Card(3, "D"))
+        self.assertTrue(self.hand.check_four_of_a_kind())
+
+        # check rank and multiple
+        self.assertEqual(self.hand.get_multiple(), 2)
+        self.assertEqual(self.hand.get_rank(), 3)
+
+        # Check with only three of a kind
+        self.hand.clear()
+        self.hand.add_card(card.Card(3, "D"))
+        self.hand.add_card(card.Card(3, "C"))
+        self.hand.add_card(card.Card(3, "S"))
+        self.hand.add_card(card.Card(4, "H"))
+        self.hand.add_card(card.Card(5, "D"))
+        self.assertFalse(self.hand.check_four_of_a_kind())
+
+    def test_full_house(self):
+        self.hand.clear()
+        self.assertFalse(self.hand.check_full_house())
+
+        for card_suit in ["C", "D", "H"]:
+            self.hand.add_card(card.Card("A", card_suit))
+        self.hand.add_card(card.Card("K", "H"))
+        self.hand.add_card(card.Card("K", "S"))
+
+        self.assertTrue(self.hand.check_full_house())
+
+        # Check rank and multiple values here as well
+        self.assertEqual(self.hand.get_rank(), 13)
+        self.assertEqual(self.hand.get_multiple(), 14)
+
+        # Check with four of a kind
+        self.hand.clear()
+        for card_suit in ["C", "D", "H", "S"]:
+            self.hand.add_card(card.Card(2, card_suit))
+        self.hand.add_card(card.Card(3, "D"))
+        self.assertFalse(self.hand.check_full_house())
+
+        # Check with general non-full house cards
+        self.hand.clear()
+        self.hand.add_card(card.Card(3, "D"))
+        self.hand.add_card(card.Card(3, "C"))
+        self.hand.add_card(card.Card(3, "S"))
+        self.hand.add_card(card.Card(4, "H"))
+        self.hand.add_card(card.Card(5, "D"))
+        self.assertFalse(self.hand.check_full_house())
 
 
 if __name__ == '__main__':
