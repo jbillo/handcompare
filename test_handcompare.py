@@ -15,9 +15,11 @@ class TestHandCompare(unittest.TestCase):
 
     def setUp(self):
         self.hc = handcompare.HandCompare()
+        self.hand = hand.Hand()
 
     def tearDown(self):
         del self.hc
+        del self.hand
 
     def test_check_argcount(self):
         # check argument count for 0, 1 and 2 parameters
@@ -40,23 +42,45 @@ class TestHandCompare(unittest.TestCase):
     def test_parse_hand_string(self):
         # ensure that the hands are valid strings with appropriate content:
 
-        # check for None and empty string cases
-        self.assertRaises(handcompare.InvalidHandError, self.hc.parse_hand_string,
-                          None)
-        self.assertRaises(handcompare.InvalidHandError, self.hc.parse_hand_string,
-                          "")
+        # check for None and empty string cases,
+        # padded strings that compress down to nothing
+        # and strings that don't contain enough commas (== 4)
 
-        # check for padded strings that compress down to nothing
-        self.assertRaises(handcompare.InvalidHandError, self.hc.parse_hand_string,
-                          "     ")
-
-        # check for strings that don't contain enough commas (== 4)
-        self.assertRaises(handcompare.InvalidHandError, self.hc.parse_hand_string,
-                          ",,,")
+        for invalid_hand in [None, "", "    ", ",,,"]:
+            self.assertRaises(handcompare.InvalidHandError, self.hc.parse_hand_string,
+                              invalid_hand)
 
         # check for a legitimate hand and list response
         result = self.hc.parse_hand_string("2C,3H,4D,5C,6H")
         self.assertEqual(len(result), 5)
+
+    def test_parse_card_string(self):
+        # ensure the card is a valid string with appropriate content
+        invalid_cards = [
+            None,
+            "",
+            " ",
+            "0H",
+            "000H",
+            "0X",
+            "000X",
+            "1H",
+            "1 H",
+            "1X",
+            "11H",
+            "12X",
+            "99H",
+            "99X",
+            "100H",
+            "100X",
+        ]
+
+        for invalid_card in invalid_cards:
+            self.assertRaises(handcompare.InvalidCardError, self.hc.parse_card_string, invalid_card)
+
+        valid_cards = ["2H", "10C", "JC", "QD", "KH", "AS"]
+        for valid_card in valid_cards:
+            self.assertTrue(self.hc.parse_card_string(valid_card))
 
 
 class TestCardValue(unittest.TestCase):
@@ -90,6 +114,22 @@ class TestCardValue(unittest.TestCase):
         # check for unknown suit values
         for invalid_suit in ["X", " ", "", 0, None]:
             self.assertFalse(self.hc.check_card_suit(invalid_suit))
+
+
+class TestHand(unittest.TestCase):
+    def setUp(self):
+        self.hand = hand.Hand()
+
+    def tearDown(self):
+        del self.hand
+
+    def test_add_card(self):
+        # try adding a non-card object
+        self.assertRaises(ValueError, self.hand.add_card, "2C")
+
+        # try adding a valid card
+        valid_card = card.Card(2, "C")
+        self.assertTrue(self.hand.add_card(valid_card))
 
 if __name__ == '__main__':
     unittest.main()
