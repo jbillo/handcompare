@@ -276,7 +276,7 @@ class TestHand(unittest.TestCase):
 
         # check rank and multiple
         self.assertEqual(self.hand.get_multiple(), 2)
-        self.assertEqual(self.hand.get_rank(), 3)
+        self.assertEqual(self.hand.get_rank()[0], 3)
 
         # Check with only three of a kind
         self.hand.clear()
@@ -366,8 +366,34 @@ class TestHand(unittest.TestCase):
         self.assertFalse(self.hand.check_straight())
 
     def test_three_of_a_kind(self):
-        pass
+        # check empty hand
+        self.hand.clear()
+        self.assertFalse(self.hand.check_three_of_a_kind())
 
+        # check three of a kind hand
+        self.hand.add_card(card.Card(3, "D"))
+        self.hand.add_card(card.Card(3, "C"))
+        self.hand.add_card(card.Card(3, "S"))
+        self.hand.add_card(card.Card(4, "H"))
+        self.hand.add_card(card.Card(5, "D"))
+        self.assertTrue(self.hand.check_three_of_a_kind())
+
+        # check rank and multiple
+        self.assertEqual(self.hand.get_multiple(), 3)
+        self.assertEqual(self.hand.get_rank()[0:2], [5, 4])
+
+    def test_two_pair(self):
+        # check empty hand
+        self.hand.clear()
+        self.assertFalse(self.hand.check_two_pair())
+
+        # check two pair hand
+        self.hand.add_card(card.Card(8, "D"))
+        self.hand.add_card(card.Card(8, "C"))
+        self.hand.add_card(card.Card(9, "S"))
+        self.hand.add_card(card.Card(9, "H"))
+        self.hand.add_card(card.Card("K", "D"))
+        self.assertTrue(self.hand.check_two_pair())
 
 if __name__ == '__main__':
     unittest.main()

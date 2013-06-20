@@ -144,7 +144,6 @@ class Hand():
             return False
 
         card_values = []
-
         for card in self.cards:
             card_values.append(card.get_value())
 
@@ -160,7 +159,7 @@ class Hand():
                 # and then compared in descending order.
                 unique_values.remove(value) # in 4 of a kind, this leaves one element
                 self.multiple = value
-                self.rank = unique_values.pop()
+                self.rank = [unique_values.pop()]
                 return True
 
         return False
@@ -221,7 +220,6 @@ class Hand():
     def check_straight(self):
         # condition 1: ace low (A = 1) - will appear as exactly 2, 3, 4, 5, 14 in values
         # condition 2: normal, no aces or ace high (A = 14)
-
         if not self.cards or not len(self.cards) == 5:
             return False
 
@@ -253,3 +251,34 @@ class Hand():
         self.multiple = 0
         self.set_rank_by_values()
         return True
+
+    def check_n_of_a_kind(self, n):
+        if n > (self.MAXIMUM_CARDS - 1):
+            return False
+
+        if not self.cards or not len(self.cards) == self.MAXIMUM_CARDS:
+            return False
+
+        card_values = []
+        for card in self.cards:
+            card_values.append(card.get_value())
+
+        unique_values = set(card_values)
+        for value in unique_values:
+            if card_values.count(value) >= n:
+                self.multiple = value
+                self.set_rank_by_values()
+                return True
+
+        return False
+
+    def check_three_of_a_kind(self):
+        return self.check_n_of_a_kind(3)
+
+    def check_two_pair(self):
+        if not self.cards or not len(self.cards) == self.MAXIMUM_CARDS:
+            return False
+
+        return True
+
+
