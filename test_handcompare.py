@@ -176,20 +176,20 @@ class TestHand(unittest.TestCase):
 
         self.assertTrue(invalid_card_detected)
 
-        # try adding too many cards
+        # try adding too many cards - populate four more in besides 2C
         self.hand.add_card(card.Card(3, "C"))
         self.hand.add_card(card.Card(4, "C"))
         self.hand.add_card(card.Card(5, "C"))
         self.hand.add_card(card.Card(6, "C"))
 
         extra_card = card.Card(7, "C")
-
         self.assertRaises(hand.MaximumCardError, self.hand.add_card, extra_card)
 
     def test_hand_type(self):
         # try with no cards and 1 card
         self.hand.clear()
         self.assertRaises(hand.MissingCardError, self.hand.get_hand_type)
+        self.hand.add_card(card.Card(2, "D"))
 
     def test_straight_flush(self):
         self.hand.clear()
@@ -205,8 +205,25 @@ class TestHand(unittest.TestCase):
         self.hand.add_card(card.Card("J", "S"))
         self.hand.add_card(card.Card("Q", "S"))
 
-        # check that we have a straight flush
+        # check that we have a straight flush with 8-Q
         self.assertTrue(self.hand.check_straight_flush())
+
+        # check that A-5 (condition 2) also counts as a straight flush
+        self.hand.clear()
+        for card_value in range(2, 6):  # 2, 3, 4, 5
+            self.hand.add_card(card.Card(card_value, "D"))
+        self.hand.add_card(card.Card("A", "D"))
+        self.assertTrue(self.hand.check_straight_flush())
+
+        # check that an explicit royal flush counts as a straight flush
+        self.hand.clear()
+        self.hand.add_card(card.Card(10, "H"))
+        self.hand.add_card(card.Card("J", "H"))
+        self.hand.add_card(card.Card("Q", "H"))
+        self.hand.add_card(card.Card("K", "H"))
+        self.hand.add_card(card.Card("A", "H"))
+        self.assertTrue(self.hand.check_straight_flush())
+
 
 if __name__ == '__main__':
     unittest.main()

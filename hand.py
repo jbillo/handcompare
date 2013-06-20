@@ -88,6 +88,7 @@ class Hand():
                 self.type = self.HAND_TYPES[hand_type]
                 break
 
+        # TODO: account for situations where getattr() call fails to get function
         pass
 
     def check_straight_flush(self):
@@ -133,3 +134,6 @@ class Hand():
         # Royal flush will bubble to the top - the ace will be in there as card[4]
         self.rank = self.cards[4].get_value()
         return True
+
+    def check_four_of_a_kind(self):
+        pass
