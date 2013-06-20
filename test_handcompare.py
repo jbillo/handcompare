@@ -6,6 +6,7 @@ test_handcompare
 
 import unittest
 import handcompare
+import card
 
 import sys
 
@@ -79,6 +80,15 @@ class TestCardValue(unittest.TestCase):
         # check that invalid cards don't get a value and have an exception thrown
         for invalid_value in ["X", 1, -1, 0, -50, "", None]:
             self.assertRaises(ValueError, self.hc.map_card_value, invalid_value)
+
+    def test_check_card_suit(self):
+        # check for known suit values
+        for valid_suit in ["C", "D", "H", "S"]:
+            self.assertTrue(self.hc.check_card_suit(valid_suit))
+
+        # check for unknown suit values
+        for invalid_suit in ["X", " ", "", 0, None]:
+            self.assertFalse(self.hc.check_card_suit(invalid_suit))
 
 if __name__ == '__main__':
     unittest.main()

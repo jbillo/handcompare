@@ -56,7 +56,8 @@ class HandCompare():
         if hand_string.count(",") != 4:
             raise InvalidHandError("Hand did not contain enough comma-separated cards")
 
-        # check if we can split this and the resulting list has enough elements
+        # FIXME check if we can split this and the resulting list has enough elements
+
 
 
         return [1,2,3,4,5]
@@ -67,7 +68,7 @@ class HandCompare():
             card = int(card)
         except (ValueError, TypeError) as e:
             # TypeError occurs when card cannot be converted to integer (None)
-            # ValueError occurs when card is letter
+            # ValueError occurs when card is letter; try and retrieve it from dict
             try:
                 return self.LETTER_CARD_VALUES[card]
             except KeyError:
@@ -79,6 +80,9 @@ class HandCompare():
 
         # Enforce integer on return.
         return card
+
+    def check_card_suit(self, suit):
+        return suit in self.SUITS
 
     def start(self):
         pass
