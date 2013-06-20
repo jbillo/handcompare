@@ -465,6 +465,23 @@ class TestHand(unittest.TestCase):
         that we always run in descending order of hand types, comparison will succeed.
         """
 
+        # TODO: additional tests here for pair scenarios (non-pair hands)
+        self.set_bad_hand()
+        self.assertFalse(self.hand.check_pair())
+
+    def test_high_card(self):
+        # check empty hand
+        self.hand.clear()
+        self.assertFalse(self.hand.check_high_card())
+
+        # check default bad hand
+        self.set_bad_hand()
+        self.assertTrue(self.hand.check_high_card())
+
+        # check multiple and rank
+        self.assertEquals(self.hand.get_multiple(), 0)
+        self.assertEquals(self.hand.get_rank(), [7, 5, 4, 3, 2])
+
 
 if __name__ == '__main__':
     unittest.main()

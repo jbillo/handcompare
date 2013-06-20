@@ -344,6 +344,7 @@ class Hand():
             return False
 
         # TODO: at this point, we could still have two pairs; decide how to handle
+        # this has already been somewhat documented
 
         # Take first pair as multiple
         self.multiple = pairs[0]
@@ -357,4 +358,17 @@ class Hand():
         self.rank = rank_values
 
         return True
+
+    def check_high_card(self):
+        if not self.cards or not len(self.cards) == self.MAXIMUM_CARDS:
+            return False
+
+        # We always at least have a high card in this case.
+        card_values = self.get_card_values()
+        card_values.sort(reverse=True)
+        self.multiple = 0
+        self.rank = card_values
+
+        return True
+
 
