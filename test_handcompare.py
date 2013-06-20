@@ -16,10 +16,12 @@ class TestHandCompare(unittest.TestCase):
     def setUp(self):
         self.hc = handcompare.HandCompare()
         self.hand = hand.Hand()
+        self.card = card.Card(2, "C")
 
     def tearDown(self):
         del self.hc
         del self.hand
+        del self.card
 
     def test_check_argcount(self):
         # check argument count for 0, 1 and 2 parameters
@@ -50,9 +52,9 @@ class TestHandCompare(unittest.TestCase):
             self.assertRaises(handcompare.InvalidHandError, self.hc.parse_hand_string,
                               invalid_hand)
 
-        # check for a legitimate hand and list response
+        # check for a legitimate hand object
         result = self.hc.parse_hand_string("2C,3H,4D,5C,6H")
-        self.assertEqual(len(result), 5)
+        self.assertIsInstance(result, hand.Hand)
 
     def test_parse_card_string(self):
         # ensure the card is a valid string with appropriate content
@@ -76,7 +78,7 @@ class TestHandCompare(unittest.TestCase):
         ]
 
         for invalid_card in invalid_cards:
-            self.assertRaises(handcompare.InvalidCardError, self.hc.parse_card_string, invalid_card)
+            self.assertRaises(card.InvalidCardError, self.hc.parse_card_string, invalid_card)
 
         valid_cards = ["2H", "10C", "JC", "QD", "KH", "AS"]
         for valid_card in valid_cards:
@@ -86,9 +88,11 @@ class TestHandCompare(unittest.TestCase):
 class TestCardValue(unittest.TestCase):
     def setUp(self):
         self.hc = handcompare.HandCompare()
+        self.card = card.Card(2, "C")
 
     def tearDown(self):
         del self.hc
+        del self.card
 
     def test_map_card_value(self):
         # check for known card values so jack through ace are treated properly
@@ -100,20 +104,20 @@ class TestCardValue(unittest.TestCase):
         ]
 
         for check_value in known_values:
-            self.assertEqual(self.hc.map_card_value(check_value[0]), check_value[1])
+            self.assertEqual(self.card._map_card_value(check_value[0]), check_value[1])
 
         # check that invalid cards don't get a value and have an exception thrown
         for invalid_value in ["X", 1, -1, 0, -50, "", None]:
-            self.assertRaises(ValueError, self.hc.map_card_value, invalid_value)
+            self.assertRaises(ValueError, self.card._map_card_value, invalid_value)
 
     def test_check_card_suit(self):
         # check for known suit values
         for valid_suit in ["C", "D", "H", "S"]:
-            self.assertTrue(self.hc.check_card_suit(valid_suit))
+            self.assertTrue(self.card._check_card_suit(valid_suit))
 
         # check for unknown suit values
         for invalid_suit in ["X", " ", "", 0, None]:
-            self.assertFalse(self.hc.check_card_suit(invalid_suit))
+            self.assertFalse(self.card._check_card_suit(invalid_suit))
 
 
 class TestHand(unittest.TestCase):
@@ -130,6 +134,11 @@ class TestHand(unittest.TestCase):
         # try adding a valid card
         valid_card = card.Card(2, "C")
         self.assertTrue(self.hand.add_card(valid_card))
+
+        # try adding an invalid card
+        #try:
+        #invalid_card = card.Card(15, "C")
+        #self.assertRaises(self.card.InvalidCardError, self.hand.add_card, invalid_card)
 
 if __name__ == '__main__':
     unittest.main()
