@@ -10,6 +10,7 @@ import handcompare
 import sys
 
 class TestHandCompare(unittest.TestCase):
+
     def setUp(self):
         self.hc = handcompare.HandCompare()
 
@@ -54,6 +55,30 @@ class TestHandCompare(unittest.TestCase):
         # check for a legitimate hand and list response
         result = self.hc.parse_hand_string("2C,3H,4D,5C,6H")
         self.assertEqual(len(result), 5)
+
+
+class TestCardValue(unittest.TestCase):
+    def setUp(self):
+        self.hc = handcompare.HandCompare()
+
+    def tearDown(self):
+        del self.hc
+
+    def test_map_card_value(self):
+        # check for known card values so jack through ace are treated properly
+        known_values = [
+            ["J", 11],
+            ["Q", 12],
+            ["K", 13],
+            ["A", 14],
+        ]
+
+        for check_value in known_values:
+            self.assertEqual(self.hc.map_card_value(check_value[0]), check_value[1])
+
+        # check that invalid cards don't get a value and have an exception thrown
+        for invalid_value in ["X", 1, -1, 0, -50, "", None]:
+            self.assertRaises(ValueError, self.hc.map_card_value, invalid_value)
 
 if __name__ == '__main__':
     unittest.main()
