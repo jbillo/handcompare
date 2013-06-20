@@ -5,6 +5,9 @@ handcompare - application for comparing poker hands
 Jake Billo <jake@jakebillo.com>
 """
 
+import card
+import hand
+
 # define custom exception classes
 class MissingArgumentError(Exception):
     pass

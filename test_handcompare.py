@@ -7,6 +7,7 @@ test_handcompare
 import unittest
 import handcompare
 import card
+import hand
 
 import sys
 
