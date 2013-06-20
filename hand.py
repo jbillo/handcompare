@@ -6,10 +6,15 @@ class DuplicateCardError(Exception):
 class MissingCardError(Exception):
     pass
 
+class MaximumCardError(Exception):
+    pass
+
 class Hand():
     cards = []
     type = 0
     rank = 0
+
+    MAXIMUM_CARDS = 5
 
     HAND_TYPES = {
         "straight_flush": 8,
@@ -64,6 +69,10 @@ class Hand():
         if self.has_exact_card(card_obj):
             raise DuplicateCardError("Card already exists in this hand")
 
+        # check if we are already at the maximum number of cards
+        if len(self.cards) == self.MAXIMUM_CARDS:
+            raise MaximumCardError("Already have {0} cards in this hand".format(self.MAXIMUM_CARDS))
+
         self.cards.append(card_obj)
         self.sort_cards()
         return True
@@ -81,10 +90,9 @@ class Hand():
 
         pass
 
-
     def check_straight_flush(self):
         # definition: five cards in sequence, all of same suit
-        if not self.cards:
+        if not self.cards or not len(self.cards) == 5:
             return False
 
         current_suit = self.cards[0].get_suit()
@@ -101,7 +109,7 @@ class Hand():
         # we can test explicitly for condition 1:
         ace_low = True
         ace_low_values = [2, 3, 4, 5, 14]
-        for card_index in range(0, self.cards):
+        for card_index in range(0, len(self.cards)):
             if ace_low_values[card_index] != self.cards[card_index].get_value():
                 ace_low = False
                 break
@@ -112,7 +120,7 @@ class Hand():
             self.rank = 5
             return True
 
-        prev_value = self.cards[0].get_suit()
+        prev_value = self.cards[0].get_value()
         # for each card from 2-5,
         # check if its value is exactly 1 more than its predecessor
 
@@ -120,3 +128,8 @@ class Hand():
             if card.get_value() != (prev_value + 1):
                 return False
             prev_value = card.get_value()
+
+        # This is a straight. The rank is the last element in the list (highest card)
+        # Royal flush will bubble to the top - the ace will be in there as card[4]
+        self.rank = self.cards[4].get_value()
+        return True

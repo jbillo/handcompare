@@ -158,6 +158,8 @@ class TestHand(unittest.TestCase):
         self.assertEqual(test_hand[1].get_suit(), proper_sort[1].get_suit())
 
     def test_add_card(self):
+        self.hand.clear()
+
         # try adding a non-card object
         self.assertRaises(ValueError, self.hand.add_card, "2C")
 
@@ -166,9 +168,23 @@ class TestHand(unittest.TestCase):
         self.assertTrue(self.hand.add_card(valid_card))
 
         # try adding an invalid card
-        #try:
-        #invalid_card = card.Card(15, "C")
-        #self.assertRaises(self.card.InvalidCardError, self.hand.add_card, invalid_card)
+        invalid_card_detected = False
+        try:
+            invalid_card = card.Card(15, "C")
+        except card.InvalidCardError:
+            invalid_card_detected = True
+
+        self.assertTrue(invalid_card_detected)
+
+        # try adding too many cards
+        self.hand.add_card(card.Card(3, "C"))
+        self.hand.add_card(card.Card(4, "C"))
+        self.hand.add_card(card.Card(5, "C"))
+        self.hand.add_card(card.Card(6, "C"))
+
+        extra_card = card.Card(7, "C")
+
+        self.assertRaises(hand.MaximumCardError, self.hand.add_card, extra_card)
 
     def test_hand_type(self):
         # try with no cards and 1 card
@@ -178,8 +194,19 @@ class TestHand(unittest.TestCase):
     def test_straight_flush(self):
         self.hand.clear()
 
-        # check that no cards create a straight flush
+        # check that an empty or incomplete hand does not create a straight flush
         self.assertFalse(self.hand.check_straight_flush())
+        self.hand.add_card(card.Card(8, "S"))
+        self.assertFalse(self.hand.check_straight_flush())
+        self.hand.add_card(card.Card(9, "S"))
+        self.assertFalse(self.hand.check_straight_flush())
+
+        self.hand.add_card(card.Card(10, "S"))
+        self.hand.add_card(card.Card("J", "S"))
+        self.hand.add_card(card.Card("Q", "S"))
+
+        # check that we have a straight flush
+        self.assertTrue(self.hand.check_straight_flush())
 
 if __name__ == '__main__':
     unittest.main()

@@ -60,7 +60,7 @@ class Card():
             raise InvalidCardError("Value of suit could not be parsed")
 
     def get_value(self):
-        return self.value
+        return int(self.value)
 
     def get_suit(self):
         return self.suit
