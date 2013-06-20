@@ -18,18 +18,6 @@ class InvalidHandError(Exception):
 class HandCompare():
     CARDS_IN_HAND = 5
 
-    HAND_RANKS = [
-        "high_card",
-        "pair",
-        "two_pair",
-        "three_of_a_kind",
-        "straight",
-        "flush",
-        "full_house",
-        "four_of_a_kind",
-        "straight_flush",
-    ]
-
     def check_argcount(self, system_args):
         # if the number of arguments < 3, raise exception
         # this includes application executable, hand1, hand2
@@ -73,7 +61,8 @@ class HandCompare():
         if len(split_cards) != self.CARDS_IN_HAND:
             raise InvalidHandError("Resulting split hand did not contain correct number of cards: {0}".format(len(split_cards)))
 
-        # create Hand object and populate it with cards
+        # create Hand object and populate it with cards; this will throw exceptions
+        # on any invalid conditions (duplicate cards, etc)
         create_hand = hand.Hand()
         for card_string in split_cards:
             create_hand.add_card(self.parse_card_string(card_string))

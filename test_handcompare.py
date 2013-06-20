@@ -127,6 +127,36 @@ class TestHand(unittest.TestCase):
     def tearDown(self):
         del self.hand
 
+    def test_clear(self):
+        # ensure there are no cards in the hand after a clear operation
+        self.hand.clear()
+        self.assertEqual(len(self.hand.get_cards()), 0)
+
+    def test_clear_sort(self):
+        # check that the sort function returns false after a clear operation
+        self.hand.clear()
+        self.assertFalse(self.hand.sort_cards())
+
+    def test_sort_cards(self):
+        # check that the sort function returns true when one or more cards are in hand
+        self.hand.clear()
+        self.hand.add_card(card.Card(3, "H"))
+        self.hand.add_card(card.Card(2, "C"))
+
+        # while cards should already be sorted at this point, make sure result is true
+        self.assertTrue(self.hand.sort_cards())
+
+        # check that the sorting actually worked: compare card values/suits
+        # can't compare objects directly since they are technically not the same object
+        # possible improvement: comparator function
+        test_hand = self.hand.get_cards()
+        proper_sort = [card.Card(2, "C"), card.Card(3, "H")]
+
+        self.assertEqual(test_hand[0].get_value(), proper_sort[0].get_value())
+        self.assertEqual(test_hand[0].get_suit(), proper_sort[0].get_suit())
+        self.assertEqual(test_hand[1].get_value(), proper_sort[1].get_value())
+        self.assertEqual(test_hand[1].get_suit(), proper_sort[1].get_suit())
+
     def test_add_card(self):
         # try adding a non-card object
         self.assertRaises(ValueError, self.hand.add_card, "2C")
@@ -139,6 +169,17 @@ class TestHand(unittest.TestCase):
         #try:
         #invalid_card = card.Card(15, "C")
         #self.assertRaises(self.card.InvalidCardError, self.hand.add_card, invalid_card)
+
+    def test_hand_type(self):
+        # try with no cards and 1 card
+        self.hand.clear()
+        self.assertRaises(hand.MissingCardError, self.hand.get_hand_type)
+
+    def test_straight_flush(self):
+        self.hand.clear()
+
+        # check that no cards create a straight flush
+        self.assertFalse(self.hand.check_straight_flush())
 
 if __name__ == '__main__':
     unittest.main()

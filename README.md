@@ -57,4 +57,5 @@ We do, however, employ SVN for change control and I have been the main team memb
 * Wikipedia articles <http://en.wikipedia.org/wiki/Five-card_draw> and <http://en.wikipedia.org/wiki/Poker_probabilities> for background information
 * Python `unittest` library documentation: <http://docs.python.org/2/library/unittest.html>
 * Python `unittest` examples: <http://docs.python.org/release/2.5.2/lib/minimal-example.html>
+* Python sorting reference: <http://wiki.python.org/moin/HowTo/Sorting/>
 * SickBeard: <https://github.com/midgetspy/Sick-Beard/> Python application on GitHub - module construction, common initialization paradigms, general reference

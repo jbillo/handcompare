@@ -16,9 +16,12 @@ class Card():
         "A": 14,
     }
 
-
     value = 0
     suit = ""
+
+    def __repr__(self):
+        # For sorting purposes, always use value first and then suit; return a tuple
+        return repr((self.value, self.suit))
 
     def _map_card_value(self, card):
         # check if card is an integer; if not, catch exception and return predefined value
