@@ -116,50 +116,27 @@ class Hand():
         # TODO: account for situations where getattr() call fails to get function
         pass
 
+    def set_rank_by_values(self):
+        card_values = []
+        for card in self.cards:
+            card_values.append(card.get_value())
+
+        # reverse the card values for easier forward comparison with other Hand objects
+        card_values.sort(reverse=True)
+        self.rank = card_values
+        return True
+
     def check_straight_flush(self):
         # definition: five cards in sequence, all of same suit
         if not self.cards or not len(self.cards) == 5:
             return False
 
-        current_suit = self.cards[0].get_suit()
+        # check if all cards are same suit - reuse flush code
+        if not self.check_flush():
+            return False
 
-        # check if all cards are same suit
-        for card in self.cards[1:]:
-            if card.get_suit() != current_suit:
-                return False
-
-        # all cards are the same suit; check if they form a sequence
-        # condition 1: ace low (A = 1) - will appear as exactly 2, 3, 4, 5, 14 in values
-        # condition 2: normal, no aces or ace high (A = 14)
-
-        # we can test explicitly for condition 1:
-        ace_low = True
-        ace_low_values = [2, 3, 4, 5, 14]
-        for card_index in range(0, len(self.cards)):
-            if ace_low_values[card_index] != self.cards[card_index].get_value():
-                ace_low = False
-                break
-
-        # if we have an ace low condition, rank is always 5
-        # and type will be straight flush
-        if ace_low:
-            self.rank = 5
-            return True
-
-        prev_value = self.cards[0].get_value()
-        # for each card from 2-5,
-        # check if its value is exactly 1 more than its predecessor
-
-        for card in self.cards[1:]:
-            if card.get_value() != (prev_value + 1):
-                return False
-            prev_value = card.get_value()
-
-        # This is a straight. The rank is the last element in the list (highest card)
-        # Royal flush will bubble to the top - the ace will be in there as card[4]
-        self.multiple = prev_value
-        self.rank = self.cards[4].get_value()
-        return True
+        # all cards are the same suit; check if they form a sequence - reuse straight code
+        return self.check_straight()
 
     def check_four_of_a_kind(self):
         # definition: four cards, any suit, same value
@@ -217,3 +194,62 @@ class Hand():
             return True
 
         return False
+
+    def check_flush(self):
+        # definition: all cards same suit, high card wins
+        # this means we have to drop the entire sequence into rank
+
+        if not self.cards or not len(self.cards) == 5:
+            return False
+
+        # drop suits into a set to enforce uniqueness
+        card_suits = set()
+        for card in self.cards:
+            card_suits.add(card.get_suit())
+
+        # there should only be one suit present
+        if len(card_suits) != 1:
+            return False
+
+        # we know this is a flush of some type; set multiple and rank accordingly
+        # ace should always act as a high card
+        self.multiple = 0
+        self.set_rank_by_values()
+
+        return True
+
+    def check_straight(self):
+        # condition 1: ace low (A = 1) - will appear as exactly 2, 3, 4, 5, 14 in values
+        # condition 2: normal, no aces or ace high (A = 14)
+
+        if not self.cards or not len(self.cards) == 5:
+            return False
+
+        # we can test explicitly for condition 1:
+        ace_low = True
+        ace_low_values = [2, 3, 4, 5, 14]
+        for card_index in range(0, len(self.cards)):
+            if ace_low_values[card_index] != self.cards[card_index].get_value():
+                ace_low = False
+                break
+
+        # if we have an ace low condition, rank is always 5
+        # and type will be straight flush. Overwrite ace as 1.
+        if ace_low:
+            self.multiple = 0
+            self.rank = [5, 4, 3, 2, 1]
+            return True
+
+        prev_value = self.cards[0].get_value()
+        # for each card from array position 1-4,
+        # check if its value is exactly 1 more than its predecessor
+
+        for card in self.cards[1:]:
+            if card.get_value() != (prev_value + 1):
+                return False
+            prev_value = card.get_value()
+
+        # This is a straight; set its rank by appropriate values
+        self.multiple = 0
+        self.set_rank_by_values()
+        return True
