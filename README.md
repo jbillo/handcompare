@@ -29,6 +29,14 @@ and would return
 
 Any input or other errors encountered at runtime will be output to stderr.
 
+# Testing and integration with build system
+
+Run the following command:
+
+    python /path/to/handcompare/test_handcompare.py
+
+Output will be standard Python `unittest`, with the last line as the string `OK` if all tests passed.
+
 # Assumptions
 
 * In a traditional five-card draw or Texas Hold-Em poker game, the game is played with only one deck. This choice is made to preserve other elements (odds calculation changes with multiple decks). Thus, duplicate cards are rejected and are considered invalid input. Hand 1 may not have the same card repeated twice or more, and Hand 2 may not contain any of the same cards as in Hand 1.
