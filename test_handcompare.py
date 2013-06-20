@@ -102,6 +102,18 @@ class TestHandCompare(unittest.TestCase):
         # At this point H1 has 2-6 of diamonds and hand2 has 2 of diamonds
         self.assertRaises(handcompare.InvalidHandError, self.hc.hand_sanity, hand1, hand2)
 
+    def test_hand_compare(self):
+        """
+        First block of standard hand comparisons. These should not throw exceptions or
+        errors, but be an example of when one hand would win out over another.
+        """
+        hand1 = hand.Hand()
+        hand2 = hand.Hand()
+
+        import default_hands
+
+
+
 class TestCardValue(unittest.TestCase):
     def setUp(self):
         self.hc = handcompare.HandCompare()

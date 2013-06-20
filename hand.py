@@ -50,6 +50,18 @@ class Hand():
 
     # TODO: implement general comparison operators (gt, lt, (eq?))
 
+    def __gt__(self):
+        # TODO: implement > operator
+        pass
+
+    def __lt__(self):
+        # TODO: implement < operator
+        pass
+
+    def __eq__(self):
+        # TODO: implement == operator
+        pass
+
     # helper to clear hand of all cards
     def clear(self):
         self.cards = []
