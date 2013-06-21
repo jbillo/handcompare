@@ -9,6 +9,9 @@ class MissingCardError(Exception):
 class MaximumCardError(Exception):
     pass
 
+class CompareError(Exception):
+    pass
+
 class Hand():
     cards = []
 
@@ -48,19 +51,102 @@ class Hand():
     def __init__(self):
         return self.clear()
 
-    # TODO: implement general comparison operators (gt, lt, (eq?))
+    def __gt__(self, hand1, hand2):
+        # check hand type first
+        if hand1.get_type() > hand2.get_type():
+            return True
+        elif hand1.get_type() < hand2.get_type():
+            return False
 
-    def __gt__(self):
-        # TODO: implement > operator
-        pass
+        # at this point hand types are equal, check multiple (single digit)
+        if hand1.get_multiple() > hand2.get_multiple():
+            return True
+        elif hand1.get_multiple() < hand2.get_multiple():
+            return False
 
-    def __lt__(self):
-        # TODO: implement < operator
-        pass
+        # at this point hand multiples are equal, check rank (list)
+        hand1_rank = hand1.get_rank()
+        hand2_rank = hand2.get_rank()
 
-    def __eq__(self):
-        # TODO: implement == operator
-        pass
+        # stop-gap: raise exception if the comparison functions
+        # this ensures data integrity and is a good way to find problems in batch runs
+        if len(hand1_rank) != len(hand2_rank):
+            raise CompareError("Length of hand rankings do not match: {0} and {1}".format(hand1_rank, hand2_rank))
+
+        # find the first element that doesn't match
+        for rank_index in range(0, len(hand1_rank)):
+            if hand1_rank[rank_index] > hand2_rank[rank_index]:
+                # hand1 > hand2
+                return True
+            elif hand1_rank[rank_index] < hand2_rank[rank_index]:
+                # hand2 > hand1
+                return False
+            # otherwise, rank items are equal - continue loop
+
+        # Finally, return false - they are equal in all categories
+        # so h1 is not greater than h2 (but __eq__ operator should deliver True)
+        return False
+
+    def __lt__(self, hand1, hand2):
+        # check hand type first
+        if hand2.get_type() > hand1.get_type():
+            return True
+        elif hand2.get_type() < hand1.get_type():
+            return False
+
+        # at this point hand types are equal, check multiple (single digit)
+        if hand2.get_multiple() > hand1.get_multiple():
+            return True
+        elif hand2.get_multiple() < hand1.get_multiple():
+            return False
+
+        # at this point hand multiples are equal, check rank (list)
+        hand1_rank = hand1.get_rank()
+        hand2_rank = hand2.get_rank()
+
+        # stop-gap: raise exception if the comparison functions
+        # this ensures data integrity and is a good way to find problems in batch runs
+        if len(hand1_rank) != len(hand2_rank):
+            raise CompareError("Length of hand rankings do not match: {0} and {1}".format(hand1_rank, hand2_rank))
+
+        # find the first element that doesn't match
+        for rank_index in range(0, len(hand1_rank)):
+            if hand2_rank[rank_index] > hand1_rank[rank_index]:
+                # hand2 > hand1
+                return True
+            elif hand2_rank[rank_index] < hand1_rank[rank_index]:
+                # hand2 < hand1
+                return False
+            # otherwise, rank items are equal - continue loop
+
+        # Finally, return false - they are equal in all categories
+        # so h1 is not greater than h2 (but __eq__ operator should deliver True)
+        return False
+
+    def __eq__(self, hand1, hand2):
+        # Check type, multiple and rank separately for readability
+        if hand1.get_type() != hand2.get_type():
+            return False
+
+        if hand1.get_multiple() != hand2.get_multiple():
+            return False
+
+        if hand1.get_rank() != hand2.get_rank():
+            return False
+
+        return True
+
+    def __le__(self, hand1, hand2):
+        # Check equality and __lt__ with inclusive or
+        return (self.__eq__(hand1, hand2) or self.__lt__(hand1, hand2))
+
+    def __ge__(self, hand1, hand2):
+        # Check equality and __gt__ with inclusive or
+        return (self.__eq__(hand1, hand2) or self.__gt__(hand1, hand2))
+
+    def __ne__(self, hand1, hand2):
+        # Convenience function - just return inverse of __eq__
+        return not (self.__eq__(hand1, hand2))
 
     # helper to clear hand of all cards
     def clear(self):
