@@ -51,102 +51,108 @@ class Hand():
     def __init__(self):
         return self.clear()
 
-    def __gt__(self, hand1, hand2):
+    def __gt__(self, other):
         # check hand type first
-        if hand1.get_type() > hand2.get_type():
+        if self.get_type() > other.get_type():
             return True
-        elif hand1.get_type() < hand2.get_type():
+        elif self.get_type() < other.get_type():
             return False
 
         # at this point hand types are equal, check multiple (single digit)
-        if hand1.get_multiple() > hand2.get_multiple():
+        if self.get_multiple() > other.get_multiple():
             return True
-        elif hand1.get_multiple() < hand2.get_multiple():
+        elif self.get_multiple() < other.get_multiple():
             return False
 
         # at this point hand multiples are equal, check rank (list)
-        hand1_rank = hand1.get_rank()
-        hand2_rank = hand2.get_rank()
+        self_rank = self.get_rank()
+        other_rank = other.get_rank()
 
         # stop-gap: raise exception if the comparison functions
         # this ensures data integrity and is a good way to find problems in batch runs
-        if len(hand1_rank) != len(hand2_rank):
-            raise CompareError("Length of hand rankings do not match: {0} and {1}".format(hand1_rank, hand2_rank))
+        if self_rank == other_rank == 0:
+            # ranks are equal at zero
+            return False
+        elif len(self_rank) != len(other_rank):
+            raise CompareError("Length of hand rankings do not match: {0} and {1}".format(self_rank, other_rank))
 
         # find the first element that doesn't match
-        for rank_index in range(0, len(hand1_rank)):
-            if hand1_rank[rank_index] > hand2_rank[rank_index]:
-                # hand1 > hand2
+        for rank_index in range(0, len(self_rank)):
+            if self_rank[rank_index] > other_rank[rank_index]:
+                # self > other
                 return True
-            elif hand1_rank[rank_index] < hand2_rank[rank_index]:
-                # hand2 > hand1
+            elif self_rank[rank_index] < other_rank[rank_index]:
+                # other > self
                 return False
             # otherwise, rank items are equal - continue loop
 
         # Finally, return false - they are equal in all categories
-        # so h1 is not greater than h2 (but __eq__ operator should deliver True)
+        # so self is not greater than other (but __eq__ operator should deliver True)
         return False
 
-    def __lt__(self, hand1, hand2):
+    def __lt__(self, other):
         # check hand type first
-        if hand2.get_type() > hand1.get_type():
+        if other.get_type() > self.get_type():
             return True
-        elif hand2.get_type() < hand1.get_type():
+        elif other.get_type() < self.get_type():
             return False
 
         # at this point hand types are equal, check multiple (single digit)
-        if hand2.get_multiple() > hand1.get_multiple():
+        if other.get_multiple() > self.get_multiple():
             return True
-        elif hand2.get_multiple() < hand1.get_multiple():
+        elif other.get_multiple() < self.get_multiple():
             return False
 
         # at this point hand multiples are equal, check rank (list)
-        hand1_rank = hand1.get_rank()
-        hand2_rank = hand2.get_rank()
+        self_rank = self.get_rank()
+        other_rank = other.get_rank()
 
         # stop-gap: raise exception if the comparison functions
         # this ensures data integrity and is a good way to find problems in batch runs
-        if len(hand1_rank) != len(hand2_rank):
-            raise CompareError("Length of hand rankings do not match: {0} and {1}".format(hand1_rank, hand2_rank))
+        if self_rank == other_rank == 0:
+            # ranks are equal at zero
+            return False
+        elif len(self_rank) != len(other_rank):
+            raise CompareError("Length of hand rankings do not match: {0} and {1}".format(self_rank, other_rank))
 
         # find the first element that doesn't match
-        for rank_index in range(0, len(hand1_rank)):
-            if hand2_rank[rank_index] > hand1_rank[rank_index]:
-                # hand2 > hand1
+        for rank_index in range(0, len(self_rank)):
+            if other_rank[rank_index] > self_rank[rank_index]:
+                # other > self
                 return True
-            elif hand2_rank[rank_index] < hand1_rank[rank_index]:
-                # hand2 < hand1
+            elif other_rank[rank_index] < self_rank[rank_index]:
+                # self > other
                 return False
             # otherwise, rank items are equal - continue loop
 
         # Finally, return false - they are equal in all categories
-        # so h1 is not greater than h2 (but __eq__ operator should deliver True)
+        # so self is not greater than other (but __eq__ operator should deliver True)
         return False
 
-    def __eq__(self, hand1, hand2):
+    def __eq__(self, other):
         # Check type, multiple and rank separately for readability
-        if hand1.get_type() != hand2.get_type():
+        if self.get_type() != other.get_type():
             return False
 
-        if hand1.get_multiple() != hand2.get_multiple():
+        if self.get_multiple() != other.get_multiple():
             return False
 
-        if hand1.get_rank() != hand2.get_rank():
+        if self.get_rank() != other.get_rank():
             return False
 
         return True
 
-    def __le__(self, hand1, hand2):
+    def __le__(self, other):
         # Check equality and __lt__ with inclusive or
-        return (self.__eq__(hand1, hand2) or self.__lt__(hand1, hand2))
+        return (self.__eq__(other) or self.__lt__(other))
 
-    def __ge__(self, hand1, hand2):
+    def __ge__(self, other):
         # Check equality and __gt__ with inclusive or
-        return (self.__eq__(hand1, hand2) or self.__gt__(hand1, hand2))
+        return (self.__eq__(other) or self.__gt__(other))
 
-    def __ne__(self, hand1, hand2):
+    def __ne__(self, other):
         # Convenience function - just return inverse of __eq__
-        return not (self.__eq__(hand1, hand2))
+        return not (self.__eq__(other))
 
     # helper to clear hand of all cards
     def clear(self):
@@ -210,21 +216,37 @@ class Hand():
 
         self.cards.append(card_obj)
         self.sort_cards()
+
+        # if we have the maximum number of cards now, determine hand type
+        # this sets ranking, multiple and
+        if len(self.cards) == self.MAXIMUM_CARDS:
+            self.get_hand_type()
+
         return True
 
-
     def get_hand_type(self):
-        if not self.cards or not len(self.cards) == 5:
+        if not self.cards or not len(self.cards) == self.MAXIMUM_CARDS:
             raise MissingCardError("Must have exactly five cards in hand")
 
         # Dynamically check hand types based on dictionary definitions
-        for hand_type in keys(self.HAND_TYPES):
+        for hand_type in self.HAND_TYPES.keys():
+            """
+            Account for situations where getattr() call fails to get function.
+            This would be in a situation where a new hand type (eg: "royal_sampler": 100)
+            gets added, but the corresponding check_royal_sampler function does not exist.
+            In this case, the hand will never get set to the designated type as it can't
+            be checked for.
+            """
+
+            if not getattr(self, "check_%s" % hand_type):
+                continue
+
+            # Actually run the check_X function call and set hand type if True
             if getattr(self, "check_%s" % hand_type)():
                 self.type = self.HAND_TYPES[hand_type]
                 break
 
-        # TODO: account for situations where getattr() call fails to get function
-        pass
+        return True
 
     def set_rank_by_values(self):
         card_values = self.get_card_values()
@@ -248,27 +270,8 @@ class Hand():
 
     def check_four_of_a_kind(self):
         # definition: four cards, any suit, same value
-        if not self.cards or not len(self.cards) == self.MAXIMUM_CARDS:
-            return False
-
-        card_values = self.get_card_values()
-
-        # Check unique values of cards, then the count of each
-        # Worst case: 5 unique cards
-        unique_values = self.get_unique_card_values()
-        for value in unique_values:
-            if card_values.count(value) == 4:
-                # In 4 of a kind, we only have one distinct ranking option (the remaining
-                # card.)
-                # TODO:
-                # For the "N of a kind" case, elements will have to be ranked in a list
-                # and then compared in descending order.
-                unique_values.remove(value) # in 4 of a kind, this leaves one element
-                self.multiple = value
-                self.rank = [unique_values.pop()]
-                return True
-
-        return False
+        # use generic function to accomplish this
+        return self.check_n_of_a_kind(4)
 
     def check_full_house(self):
         # definition: three matching cards of one value + two matching cards of another
