@@ -102,15 +102,31 @@ class TestHandCompare(unittest.TestCase):
         # At this point H1 has 2-6 of diamonds and hand2 has 2 of diamonds
         self.assertRaises(handcompare.InvalidHandError, self.hc.hand_sanity, hand1, hand2)
 
+    def load_default_hand(self, hand):
+        # Return a Hand object for comparison purposes.
+        import default_hands
+        return self.hc.parse_hand_string(default_hands.DEFAULT_HANDS[hand])
+
     def test_hand_compare(self):
         """
         First block of standard hand comparisons. These should not throw exceptions or
         errors, but be an example of when one hand would win out over another.
         """
-        hand1 = hand.Hand()
-        hand2 = hand.Hand()
-
         import default_hands
+
+        # Check equality operators for sampling of hands
+        hand1 = self.load_default_hand("royal_flush")
+        hand2 = self.load_default_hand("royal_flush_2")
+        self.assertEqual(hand1, hand2)
+
+        hand1 = self.load_default_hand("straight_flush")
+        hand2 = self.load_default_hand("straight_flush_2")
+        self.assertEqual(hand1, hand2)
+
+        # Check gt operator for sampling of hands
+        hand1 = self.load_default_hand("royal_flush")
+        hand2 = self.load_default_hand("straight_flush")
+        self.assertGreater(hand1, hand2)
 
 
 
