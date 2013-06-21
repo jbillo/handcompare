@@ -145,6 +145,27 @@ class TestHandCompare(unittest.TestCase):
         hand2 = self.load_default_hand("high_card")
         self.assertLess(hand1, hand2)
 
+    def test_hand_compare_wikipedia(self):
+        # Use exact testcases from Wikipedia article
+        import default_hands
+
+        hand1 = self.load_default_hand("wp_straight_flush_1")
+        hand2 = self.load_default_hand("wp_straight_flush_2")
+        self.assertGreater(hand1, hand2)
+
+        hand1 = self.load_default_hand("wp_straight_flush_3")
+        hand2 = self.load_default_hand("wp_straight_flush_4")
+        self.assertEqual(hand1, hand2)
+
+        hand1 = self.load_default_hand("wp_four_of_a_kind_1")
+        hand2 = self.load_default_hand("wp_four_of_a_kind_2")
+        self.assertGreater(hand1, hand2)
+
+        hand1 = self.load_default_hand("wp_four_of_a_kind_3")
+        hand2 = self.load_default_hand("wp_four_of_a_kind_4")
+        self.assertGreater(hand1, hand2)
+
+
 class TestCardValue(unittest.TestCase):
     def setUp(self):
         self.hc = handcompare.HandCompare()

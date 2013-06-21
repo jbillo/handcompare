@@ -18,9 +18,9 @@ Other work and contributions available at <http://github.com/jbillo>
 
 From a terminal, run:
 
-    python /path/to/handcompare/handcompare.py [hand1] [hand2]
+    python /path/to/handcompare/handcompare.py [hand1] [hand2] <options>
 
-Where `hand1` and `hand2` are each comma-separated strings representing a hand of 5 cards. Cards are given as a number from 2 to 10, or the character J/Q/K/A for Jack/Queen/King/Ace, followed by a suit character (*C*lubs, *D*iamonds, *H*earts or *S*pades.) For example, the following hand:
+`hand1` and `hand2` are each comma-separated strings representing a hand of 5 cards. Cards are given as a number from 2 to 10, or the character J/Q/K/A for Jack/Queen/King/Ace, followed by a suit character (*C*lubs, *D*iamonds, *H*earts or *S*pades.) For example, the following hand:
 
     2C,3H,4D,5S,10C
 
@@ -34,7 +34,16 @@ and would return
 
     Hand 2 is the winning hand
 
-Any input or other errors encountered at runtime will be output to stderr, as a typical exception trace. In a production or completely headless system, I would use a Python logging class. Such a logging class would offer the ability to redirect these exceptions to file, a syslog server or database for further analysis and troubleshooting.
+Any input or other errors encountered at runtime will be output to `stderr` as a typical exception trace. In a production or completely headless system, I would use a Python logging class. That enhancement would offer the ability to redirect these exceptions to file, a syslog server or database for further analysis and troubleshooting.
+
+Current options include:
+
+    --no-sanity     Disable sanity checking. Hand 2 may contain some or all
+                    of the same cards (suit and value) as Hand 1.
+                    In a real-world scenario, this would be as if two players
+                    were drawing from each of their own 52 card decks.
+                    This option is exposed for consistency as the test suite does
+                    not enforce the "unique cards" restriction when comparing hands.
 
 # Testing and integration with build system
 
@@ -46,7 +55,8 @@ Output will be in standard Python `unittest` format, with the last output line a
 
 # Assumptions
 
-* In a traditional five-card draw or Texas Hold-Em poker game, the game is played with only one deck of 52 cards. This choice is made to preserve other elements (odds calculation changes with multiple decks.) Thus, duplicate cards are rejected and are considered invalid input. Each hand may not have the same card repeated twice or more, and Hand 2 may not contain any of the same cards as in Hand 1.
+* In a traditional five-card draw or Texas Hold-Em poker game, the game is played with only one deck of 52 cards. This choice is made to preserve other elements (odds calculation changes with multiple decks.) Thus, duplicate cards are rejected and are considered invalid input. Each hand may not have the same card repeated twice or more.
+    * In normal execution, Hand 2 may not contain any of the same cards as in Hand 1.  There is a sanity check that will fail during normal execution. Some of the test case scenarios exercised to confirm proper hand ranking behaviour rely on the same cards being in Hand 1 and Hand 2. This option can be disabled for runtime with a `--no-sanity` parameter passed after the hand strings.
     * Possible improvement: allow for multi-deck play, relaxing these restrictions - although in real life scenarios, these games are casino variants, not traditional poker and would have different rules (wild cards) that would affect the hand ranking process.
 
 # Background information and methodology

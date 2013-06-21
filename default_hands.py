@@ -29,4 +29,8 @@ DEFAULT_HANDS = {
     "wp_straight_flush_2"       : "5S,4S,3S,2S,AS",
     "wp_straight_flush_3"       : "JC,10C,9C,8C,7C",
     "wp_straight_flush_4"       : "JD,10D,9D,8D,7D",
+    "wp_four_of_a_kind_1"       : "10C,10D,10H,10S,5D",
+    "wp_four_of_a_kind_2"       : "6D,6H,6S,6C,KS",
+    "wp_four_of_a_kind_3"       : "10C,10D,10H,10S,QC",
+    "wp_four_of_a_kind_4"       : "10C,10D,10H,10S,5D",
 }
