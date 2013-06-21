@@ -85,7 +85,7 @@ class TestHandCompare(unittest.TestCase):
         for invalid_card in invalid_cards:
             self.assertRaises(card.InvalidCardError, self.hc.parse_card_string, invalid_card)
 
-        valid_cards = ["2H", "10C", "JC", "QD", "KH", "AS"]
+        valid_cards = ["2H", "5S", "10C", "JC", "QD", "KH", "AS"]
         for valid_card in valid_cards:
             self.assertTrue(self.hc.parse_card_string(valid_card))
 
@@ -128,7 +128,18 @@ class TestHandCompare(unittest.TestCase):
         hand2 = self.load_default_hand("straight_flush")
         self.assertGreater(hand1, hand2)
 
+        # Check le operator for sampling of hands
+        hand1 = self.load_default_hand("full_house")
+        hand2 = self.load_default_hand("four_of_a_kind")
 
+        print
+        print "XXX"
+        print hand1.get_rank()
+        print hand2.get_rank()
+        print "XXX"
+        print
+
+        self.assertLess(hand1, hand2)
 
 class TestCardValue(unittest.TestCase):
     def setUp(self):
@@ -339,7 +350,7 @@ class TestHand(unittest.TestCase):
         self.assertTrue(self.hand.check_full_house())
 
         # Check rank and multiple values here as well
-        self.assertEqual(self.hand.get_rank(), 13)
+        self.assertEqual(self.hand.get_rank(), [13])
         self.assertEqual(self.hand.get_multiple(), 14)
 
         # Check with four of a kind
@@ -509,6 +520,13 @@ class TestHand(unittest.TestCase):
         # check multiple and rank
         self.assertEquals(self.hand.get_multiple(), 0)
         self.assertEquals(self.hand.get_rank(), [7, 5, 4, 3, 2])
+
+    def test_get_hand_type(self):
+        # TODO: explicitly pass or fail this test with asserts
+        # check all types in default types
+        import default_hands
+        for value in default_hands.DEFAULT_HANDS.values():
+            self.hand = handcompare.HandCompare().parse_hand_string(value)
 
 
 if __name__ == '__main__':

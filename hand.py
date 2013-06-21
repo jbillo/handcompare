@@ -92,6 +92,7 @@ class Hand():
 
     def __lt__(self, other):
         # check hand type first
+
         if other.get_type() > self.get_type():
             return True
         elif other.get_type() < self.get_type():
@@ -292,11 +293,11 @@ class Hand():
 
         if (card_values.count(value1) == 3 and card_values.count(value2) == 2):
             self.multiple = value1
-            self.rank = value2
+            self.rank = [value2]
             return True
         elif (card_values.count(value1) == 2 and card_values.count(value2) == 3):
             self.multiple = value2
-            self.rank = value1
+            self.rank = [value1]
             return True
 
         return False
@@ -367,6 +368,7 @@ class Hand():
 
         card_values = self.get_card_values()
         unique_values = self.get_unique_card_values()
+
         for value in unique_values:
             if card_values.count(value) >= n:
                 self.multiple = value

@@ -54,7 +54,7 @@ class HandCompare():
             raise InvalidHandError("Specified hand was None or empty")
 
         if hand_string.count(",") != (self.CARDS_IN_HAND - 1):
-            raise InvalidHandError("Hand did not contain correct number of  comma-separated cards")
+            raise InvalidHandError("Hand did not contain correct number of comma-separated cards; original hand: {0}".format(hand_string))
 
         # check if we can split this and the resulting list has enough elements
         split_cards = hand_string.split(",")
@@ -75,7 +75,7 @@ class HandCompare():
         h1_cards = hand1.get_cards()
         h2_cards = hand2.get_cards()
 
-        # use __eq__ method to check card equality
+        # use defined __eq__ method to check card equality
         for card in h1_cards:
             for comp_card in h2_cards:
                 if card == comp_card:
