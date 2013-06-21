@@ -12,6 +12,9 @@ class MaximumCardError(Exception):
 class CompareError(Exception):
     pass
 
+class CheckFunctionError(Exception):
+    pass
+
 class Hand():
     cards = []
 
@@ -32,17 +35,17 @@ class Hand():
 
     MAXIMUM_CARDS = 5
 
-    HAND_TYPES = {
-        "straight_flush": 8,
-        "four_of_a_kind": 7,
-        "full_house": 6,
-        "flush": 5,
-        "straight": 4,
-        "three_of_a_kind": 3,
-        "two_pair": 2,
-        "pair": 1,
-        "high_card": 0,
-    }
+    HAND_TYPES = (
+        ("straight_flush", 8),
+        ("four_of_a_kind", 7),
+        ("full_house", 6),
+        ("flush", 5),
+        ("straight", 4),
+        ("three_of_a_kind", 3),
+        ("two_pair", 2),
+        ("pair", 1),
+        ("high_card", 0),
+    )
 
     # representation: return the card list
     def __repr__(self):
@@ -230,7 +233,10 @@ class Hand():
             raise MissingCardError("Must have exactly five cards in hand")
 
         # Dynamically check hand types based on dictionary definitions
-        for hand_type in self.HAND_TYPES.keys():
+        for type_definitions in self.HAND_TYPES:
+            type_name = type_definitions[0]
+            type_value = type_definitions[1]
+
             """
             Account for situations where getattr() call fails to get function.
             This would be in a situation where a new hand type (eg: "royal_sampler": 100)
@@ -239,12 +245,11 @@ class Hand():
             be checked for.
             """
 
-            if not getattr(self, "check_%s" % hand_type):
-                continue
+            if not getattr(self, "check_{0}".format(type_name)):
+                raise CheckFunctionError("Cannot check hand for {0}; missing function".format(type_name))
 
-            # Actually run the check_X function call and set hand type if True
-            if getattr(self, "check_%s" % hand_type)():
-                self.type = self.HAND_TYPES[hand_type]
+            if getattr(self, "check_{0}".format(type_name))():
+                self.type = type_value
                 break
 
         return True
@@ -369,8 +374,11 @@ class Hand():
         card_values = self.get_card_values()
         unique_values = self.get_unique_card_values()
 
+        # Check the number of occurrences of each unique card value.
+        # If greater or equal to "N-of-a-kind", we have this condition satisfied
         for value in unique_values:
             if card_values.count(value) >= n:
+                # Set the multiple property to the card value seen N or more times
                 self.multiple = value
                 self.set_rank_by_values()
                 return True
