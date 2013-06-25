@@ -5,6 +5,8 @@ handcompare - application for comparing poker hands
 Jake Billo <jake@jakebillo.com>
 """
 
+import sys
+
 import card
 import hand
 
@@ -84,7 +86,51 @@ class HandCompare():
         return True
 
     def start(self):
-        pass
+        try:
+            self.check_argcount(sys.argv)
+        except MissingArgumentError:
+            print "Error: Missing argument; please specify two hands."
+            self.usage()
+
+        # Start script: try to parse hands
+        try:
+            hand1 = self.parse_hand_string(sys.argv[1])
+            hand2 = self.parse_hand_string(sys.argv[2])
+        except InvalidHandError:
+            print "Error: One or more hands was invalid."
+            self.usage()
+
+        # Check options for sanity
+        if not "--no-sanity" in sys.argv:
+            # Perform sanity check and allow exception to bubble up/terminate
+            self.hand_sanity(hand1, hand2)
+
+        # Compare hands and print output
+        if hand1 > hand2:
+            print "Hand 1 is the winning hand"
+        elif hand2 > hand1:
+            print "Hand 2 is the winning hand"
+        else:
+            print "Hand 1 and 2 draw"
+
+        sys.exit(0)
+
+    def usage(self):
+        print """
+Usage:
+{0} [hand1] [hand2] <options>
+
+Current options include:
+
+--no-sanity     Disable sanity checking. Hand 2 may contain some or all
+                of the same cards (suit and value) as Hand 1.
+                In a real-world scenario, this would be as if two players
+                were drawing from each of their own 52 card decks.
+                This option is exposed for consistency as the test suite does
+                not enforce the "unique cards" restriction when comparing hands.
+        """.format(sys.argv[0])
+
+        sys.exit(1)
 
 
 
