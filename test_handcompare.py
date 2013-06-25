@@ -555,5 +555,9 @@ class TestHand(unittest.TestCase):
 
 
 if __name__ == '__main__':
+    # Empty sys.argv in case this application is accidentally run with hands
+    # or other arguments specified - Python's unit testing mechanism will attempt to
+    # run specific test cases
+    sys.argv = [sys.argv[0]]
     unittest.main()
 
