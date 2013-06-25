@@ -85,7 +85,7 @@ class HandCompare():
 
         return True
 
-    def start(self):
+    def main(self):
         try:
             self.check_argcount(sys.argv)
         except MissingArgumentError:
@@ -99,11 +99,19 @@ class HandCompare():
         except InvalidHandError:
             print "Error: One or more hands was invalid."
             self.usage()
+        except hand.DuplicateCardError:
+            print "Error: The same card was specified more than once in a hand."
+            self.usage()
 
         # Check options for sanity
         if not "--no-sanity" in sys.argv:
             # Perform sanity check and allow exception to bubble up/terminate
-            self.hand_sanity(hand1, hand2)
+            try:
+                self.hand_sanity(hand1, hand2)
+            except InvalidHandError:
+                print ("Error: Duplicate cards found across both hands. To disable, "
+                      "use the --no-sanity option.")
+                self.usage()
 
         # Compare hands and print output
         if hand1 > hand2:
@@ -136,4 +144,4 @@ Current options include:
 
 if __name__ == '__main__':
     hc = HandCompare()
-    hc.start()
+    hc.main()
