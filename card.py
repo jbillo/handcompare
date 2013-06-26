@@ -1,7 +1,7 @@
 class InvalidCardError(Exception):
     pass
 
-class Card():
+class Card(object):
     SUITS = {
         "H": "hearts",
         "C": "clubs",

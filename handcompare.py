@@ -17,7 +17,7 @@ class MissingArgumentError(Exception):
 class InvalidHandError(Exception):
     pass
 
-class HandCompare():
+class HandCompare(object):
     CARDS_IN_HAND = 5
 
     def check_argcount(self, system_args):

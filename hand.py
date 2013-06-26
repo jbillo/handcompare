@@ -15,7 +15,7 @@ class CompareError(Exception):
 class CheckFunctionError(Exception):
     pass
 
-class Hand():
+class Hand(object):
     cards = []
 
     # type: hand type (flush, straight, pair, etc...)
