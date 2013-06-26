@@ -116,7 +116,6 @@ class TestHandCompare(unittest.TestCase):
         First block of standard hand comparisons. These should not throw exceptions or
         errors, but be an example of when one hand would win out over another.
         """
-        import default_hands
 
         # Check equality operators for sampling of hands
         hand1 = self.load_default_hand("royal_flush")
@@ -151,7 +150,6 @@ class TestHandCompare(unittest.TestCase):
 
     def test_hand_compare_wikipedia(self):
         # TODO: Use specific testcases from Wikipedia article
-        import default_hands
 
         hand1 = self.load_default_hand("wp_straight_flush_1")
         hand2 = self.load_default_hand("wp_straight_flush_2")

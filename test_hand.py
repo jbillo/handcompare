@@ -13,13 +13,17 @@ import handcompare
 
 class TestHand(unittest.TestCase):
     def setUp(self):
+        """Construct shared objects for all testcases in this suite."""
         self.hand = hand.Hand()
 
     def tearDown(self):
+        """Destroy all shared objects from this suite."""
         del self.hand
 
-    # Helper function to set up a 5 card hand that won't play anything; rank 7/high card
     def set_bad_hand(self):
+        """
+        Helper function to set up a 5 card hand that won't beat anything; rank 7/high card
+        """
         self.hand.clear()
         self.hand.add_card(card.Card(2, "D"))
         self.hand.add_card(card.Card(3, "C"))
@@ -28,6 +32,7 @@ class TestHand(unittest.TestCase):
         self.hand.add_card(card.Card(7, "D"))
 
     def set_full_house(self):
+        """Helper function to construct an AAAKK full house"""
         self.hand.clear()
         for card_suit in ["C", "D", "H"]:
             self.hand.add_card(card.Card("A", card_suit))
@@ -35,6 +40,7 @@ class TestHand(unittest.TestCase):
         self.hand.add_card(card.Card("K", "S"))
 
     def set_three_of_a_kind(self):
+        """Helper function to construct a 3-of-a-kind hand, 33345"""
         self.hand.clear()
         self.hand.add_card(card.Card(3, "D"))
         self.hand.add_card(card.Card(3, "C"))
@@ -43,17 +49,17 @@ class TestHand(unittest.TestCase):
         self.hand.add_card(card.Card(5, "D"))
 
     def test_clear(self):
-        # ensure there are no cards in the hand after a clear operation
+        """Ensure there are no cards in the hand after a clear operation"""
         self.hand.clear()
         self.assertEqual(len(self.hand.get_cards()), 0)
 
     def test_clear_sort(self):
-        # check that the sort function returns false after a clear operation
+        """Check that the sort function returns false after a clear operation"""
         self.hand.clear()
         self.assertFalse(self.hand.sort_cards())
 
     def test_sort_cards(self):
-        # check that the sort function returns true when one or more cards are in hand
+        """Check that the sort function returns true when one or more cards are in hand"""
         self.hand.clear()
         self.hand.add_card(card.Card(3, "H"))
         self.hand.add_card(card.Card(2, "C"))
@@ -73,6 +79,10 @@ class TestHand(unittest.TestCase):
         self.assertEqual(test_hand[1].get_suit(), proper_sort[1].get_suit())
 
     def test_add_card(self):
+        """
+        Check that adding a card works,
+        as well as rejecting invalid or too many cards
+        """
         self.hand.clear()
 
         # try adding a non-card object
@@ -85,7 +95,7 @@ class TestHand(unittest.TestCase):
         # try adding an invalid card
         invalid_card_detected = False
         try:
-            invalid_card = card.Card(15, "C")
+            card.Card(15, "C")
         except card.InvalidCardError:
             invalid_card_detected = True
 
@@ -99,12 +109,16 @@ class TestHand(unittest.TestCase):
         self.assertRaises(hand.MaximumCardError, self.hand.add_card, extra_card)
 
     def test_hand_type(self):
+        """Check that get_hand_type returns the proper value"""
         # try with no cards and 1 card
         self.hand.clear()
         self.assertRaises(hand.MissingCardError, self.hand.get_hand_type)
         self.hand.add_card(card.Card(2, "D"))
 
+        # TODO: what else are we testing here?
+
     def test_straight_flush(self):
+        """Check that straight flush detection functions properly"""
         self.hand.clear()
 
         # check that an empty or incomplete hand does not create a straight flush
@@ -146,6 +160,7 @@ class TestHand(unittest.TestCase):
         self.assertTrue(self.hand.check_straight_flush())
 
     def test_four_of_a_kind(self):
+        """Check that 4-of-a-kind detection functions properly"""
         self.hand.clear()
         for card_suit in ["C", "D", "H", "S"]:
             self.hand.add_card(card.Card(2, card_suit))
@@ -165,6 +180,7 @@ class TestHand(unittest.TestCase):
         self.assertFalse(self.hand.check_four_of_a_kind())
 
     def test_full_house(self):
+        """Check that full house detection functions properly"""
         self.hand.clear()
         self.assertFalse(self.hand.check_full_house())
 
@@ -188,6 +204,7 @@ class TestHand(unittest.TestCase):
         self.assertFalse(self.hand.check_full_house())
 
     def test_flush(self):
+        """Check that flush detection functions properly"""
         self.hand.clear()
         self.assertFalse(self.hand.check_flush())
 
@@ -207,6 +224,7 @@ class TestHand(unittest.TestCase):
         self.assertFalse(self.hand.check_flush())
 
     def test_straight(self):
+        """Check that straight detection functions properly"""
         self.hand.clear()
         self.assertFalse(self.hand.check_straight())
 
@@ -239,6 +257,7 @@ class TestHand(unittest.TestCase):
         self.assertFalse(self.hand.check_straight())
 
     def test_three_of_a_kind(self):
+        """Check that 3-of-a-kind detection functions properly"""
         # check empty hand
         self.hand.clear()
         self.assertFalse(self.hand.check_three_of_a_kind())
@@ -252,6 +271,7 @@ class TestHand(unittest.TestCase):
         self.assertEqual(self.hand.get_rank()[0:2], [5, 4])
 
     def test_two_pair(self):
+        """Check that two-pair detection functions properly"""
         # check empty hand
         self.hand.clear()
         self.assertFalse(self.hand.check_two_pair())
@@ -290,13 +310,16 @@ class TestHand(unittest.TestCase):
         ace card (numerical value of 14). We could account for this, but the compare
         condition will never be encountered. A full house always beats two pair and
         when comparing two full houses, the 3-up card will be taken as the multiple.
+
+        For example, this will fail:
+        self.assertEqual(self.hand.get_rank(), [13, 14])
         """
-        #self.assertEqual(self.hand.get_rank(), [13, 14])
-        # workaround - don't include last A card:
+        # Workaround from above - don't include last A card:
         self.assertEqual(self.hand.get_rank(), [13])
 
 
     def test_pair(self):
+        """Check that single pair detection is working properly"""
         # check empty hand
         self.hand.clear()
         self.assertFalse(self.hand.check_two_pair())
@@ -326,11 +349,12 @@ class TestHand(unittest.TestCase):
         that we always run in descending order of hand types, comparison will succeed.
         """
 
-        # TODO: additional tests here for pair scenarios (non-pair hands)
+        # Check false for non-pair scenario
         self.set_bad_hand()
         self.assertFalse(self.hand.check_pair())
 
     def test_high_card(self):
+        """Check that high card detection is working properly"""
         # check empty hand
         self.hand.clear()
         self.assertFalse(self.hand.check_high_card())

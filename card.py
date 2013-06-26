@@ -48,7 +48,7 @@ class Card(object):
 
         try:
             card = int(card)
-        except (ValueError, TypeError) as e:
+        except (ValueError, TypeError):
             # TypeError occurs when card cannot be converted to integer (None)
             # ValueError occurs when card is letter; try and retrieve it from dict
             try:

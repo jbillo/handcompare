@@ -70,7 +70,7 @@ class Hand(object):
 
     def __init__(self):
         """Constructor: Clear the card list at initialization"""
-        return self.clear()
+        self.clear()
 
     def __gt__(self, other):
         """> operator: Determine if this hand wins over another."""
@@ -510,7 +510,6 @@ class Hand(object):
             return False
 
         unique_values = self.get_unique_card_values()
-        card_values = self.get_card_values()
 
         pairs = self.get_pairs()
         if not pairs or len(pairs) < 1:
@@ -544,5 +543,4 @@ class Hand(object):
         self.rank = card_values
 
         return True
-
 
