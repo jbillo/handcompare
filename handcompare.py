@@ -12,15 +12,27 @@ import hand
 
 # define custom exception classes
 class MissingArgumentError(Exception):
+    """Exception thrown when command-line arguments are improperly provided."""
     pass
 
 class InvalidHandError(Exception):
+    """Exception thrown when a hand is inconsistent."""
     pass
 
 class HandCompare(object):
+    """
+    Class for parsing card strings and comparing two hands.
+    """
+
+    # Define the typical/maximum number of cards in the hand.
     CARDS_IN_HAND = 5
 
     def check_argcount(self, system_args):
+        """
+        Checks the number of arguments passed on the command line.
+        Throws a MissingArgumentError if two hands are not provided.
+        """
+
         # if the number of arguments < 3, raise exception
         # this includes application executable, hand1, hand2
         if not system_args or len(system_args) < 3:
@@ -29,6 +41,9 @@ class HandCompare(object):
         return True
 
     def parse_card_string(self, card_string):
+        """
+        Given a string, parses a card and returns a Card objects.
+        """
         # check if string is None
         if not card_string or not card_string.strip():
             raise card.InvalidCardError("Specified card was None or empty")
@@ -50,8 +65,12 @@ class HandCompare(object):
         # create the object/return it, which will raise exceptions as necessary
         return card.Card(card_value, card_suit)
 
-
     def parse_hand_string(self, hand_string):
+        """
+        Given a string, uses parse_card_string to turn that string into Card objects,
+        and then assembles a Hand object from those cards.
+        """
+
         if not hand_string or not hand_string.strip():
             raise InvalidHandError("Specified hand was None or empty")
 
@@ -72,8 +91,12 @@ class HandCompare(object):
         return create_hand
 
     def hand_sanity(self, hand1, hand2):
-        # check that hands do not contain the same cards
-        # the hand itself ensures uniqueness, but compare against each other
+        """
+        Perform a sanity test given two Hand objects - that they do not contain the
+        same cards. The Hand object itself ensures the same card does not appear twice,
+        but this optional function enforces a "52-card deck" constraint.
+        """
+
         h1_cards = hand1.get_cards()
         h2_cards = hand2.get_cards()
 
@@ -86,13 +109,19 @@ class HandCompare(object):
         return True
 
     def main(self):
+        """
+        Main entry point to application. Requests two card hands, attempts to parse them,
+        and outputs a comparison (hand 1 vs hand 2.)
+        """
+
+        # Check argument count passed on command line
         try:
             self.check_argcount(sys.argv)
         except MissingArgumentError:
             print "Error: Missing argument; please specify two hands."
             self.usage()
 
-        # Start script: try to parse hands
+        # Try to parse hands
         try:
             hand1 = self.parse_hand_string(sys.argv[1])
             hand2 = self.parse_hand_string(sys.argv[2])
@@ -124,6 +153,11 @@ class HandCompare(object):
         sys.exit(0)
 
     def usage(self):
+        """
+        Meant to be called in an error or help message. Returns usage information for
+        the application, then exits with system error code 1.
+        """
+
         print """
 Usage:
 {0} [hand1] [hand2] <options>
@@ -141,7 +175,7 @@ Current options include:
         sys.exit(1)
 
 
-
+# Entry point for application so this module can be imported by other applications
 if __name__ == '__main__':
     hc = HandCompare()
     hc.main()

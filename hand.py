@@ -1,21 +1,42 @@
+"""
+This script is not directly executable and forms part of the objects for
+the handcompare application.
+"""
+
+# Hand: Represents a single hand of Card objects.
+
 import card
 
 class DuplicateCardError(Exception):
+    """Thrown when a card already exists in this Hand object."""
     pass
 
 class MissingCardError(Exception):
+    """Thrown when this Hand object does not have enough cards to determine a type."""
     pass
 
 class MaximumCardError(Exception):
+    """Thrown when this Hand object already has the maximum amount of cards."""
     pass
 
 class CompareError(Exception):
+    """Thrown when an error occurred comparing two rankings of hands."""
     pass
 
 class CheckFunctionError(Exception):
+    """Thrown when a hand type is defined, but no corresponding check_ function exists."""
     pass
 
 class Hand(object):
+    """
+    Defines a hand of Card objects.
+
+    Perform the following technique for ranking:
+    * Winning hand is greater of type property
+    * If type is equal, winning hand is greater of multiple property
+    * If multiple is equal, winning hand is greater of rank property
+    * If rank is equal, hands are a draw
+    """
     cards = []
 
     # type: hand type (flush, straight, pair, etc...)
@@ -27,14 +48,10 @@ class Hand(object):
     # multiple: in pair+ situations, contains the value of pair+s (3x 8's = 8)
     multiple = 0
 
-    # Perform the following technique for ranking:
-    # winning hand is greater of type
-    # if type is equal, winning hand is greater multiple
-    # if multiple is equal, winning hand is > rank (may be list or tuple)
-    # if rank is equal, hands are a draw
-
+    # Specifies maximum number of cards in a hand
     MAXIMUM_CARDS = 5
 
+    # Defines hand types. Larger type values win over smaller ones.
     HAND_TYPES = (
         ("straight_flush", 8),
         ("four_of_a_kind", 7),
@@ -47,14 +64,17 @@ class Hand(object):
         ("high_card", 0),
     )
 
-    # representation: return the card list
     def __repr__(self):
+        """Representation: return the card list as a string for parsing"""
         return str(self.cards)
 
     def __init__(self):
+        """Constructor: Clear the card list at initialization"""
         return self.clear()
 
     def __gt__(self, other):
+        """> operator: Determine if this hand wins over another."""
+
         # check hand type first
         if self.get_type() > other.get_type():
             return True
@@ -77,7 +97,8 @@ class Hand(object):
             # ranks are equal at zero
             return False
         elif len(self_rank) != len(other_rank):
-            raise CompareError("Length of hand rankings do not match: {0} and {1}".format(self_rank, other_rank))
+            raise CompareError("Length of hand rankings do not match: "
+                               "{0} and {1}".format(self_rank, other_rank))
 
         # find the first element that doesn't match
         for rank_index in range(0, len(self_rank)):
@@ -94,8 +115,9 @@ class Hand(object):
         return False
 
     def __lt__(self, other):
-        # check hand type first
+        """< operator: determine if this hand loses to another."""
 
+        # check hand type first
         if other.get_type() > self.get_type():
             return True
         elif other.get_type() < self.get_type():
@@ -117,7 +139,8 @@ class Hand(object):
             # ranks are equal at zero
             return False
         elif len(self_rank) != len(other_rank):
-            raise CompareError("Length of hand rankings do not match: {0} and {1}".format(self_rank, other_rank))
+            raise CompareError("Length of hand rankings do not match: "
+                               "{0} and {1}".format(self_rank, other_rank))
 
         # find the first element that doesn't match
         for rank_index in range(0, len(self_rank)):
@@ -134,7 +157,7 @@ class Hand(object):
         return False
 
     def __eq__(self, other):
-        # Check type, multiple and rank separately for readability
+        """== operator: Check type, multiple and rank separately for readability"""
         if self.get_type() != other.get_type():
             return False
 
@@ -147,49 +170,55 @@ class Hand(object):
         return True
 
     def __le__(self, other):
-        # Check equality and __lt__ with inclusive or
+        """<= operator: Check equality and __lt__ with inclusive or"""
         return (self.__eq__(other) or self.__lt__(other))
 
     def __ge__(self, other):
-        # Check equality and __gt__ with inclusive or
+        """>= operator: check equality and __gt__ with inclusive or"""
         return (self.__eq__(other) or self.__gt__(other))
 
     def __ne__(self, other):
-        # Convenience function - just return inverse of __eq__
+        """!= operator: convenience function - just return inverse of __eq__"""
         return not (self.__eq__(other))
 
-    # helper to clear hand of all cards
     def clear(self):
+        """Helper: Reset hand and return it to zero cards with no rank"""
         self.cards = []
         self.rank = 0
         self.multiple = 0
 
     def get_cards(self):
+        """Accessor: get list of Card objects"""
         return self.cards
 
     def get_type(self):
+        """Accessor: get type property"""
         return self.type
 
     def get_multiple(self):
+        """Accessor: return multiple property"""
         return self.multiple
 
     def get_rank(self):
+        """Accessor: return rank property"""
         return self.rank
 
-    # helper: return values of cards; list will be sorted
     def get_card_values(self):
+        """Return values of cards in a list; list will be sorted"""
         card_values = []
         for card in self.cards:
             card_values.append(card.get_value())
 
         return card_values
 
-    # helper: return unique card values in a set
     def get_unique_card_values(self):
+        """Helper: return unique card values in a set"""
         return set(self.get_card_values())
 
     def sort_cards(self):
-        # Using the object representation, Python's built in sorted() function
+        """Sort cards in this hand. Occurs automatically on add_card()."""
+
+        # Using the object representation of Card, Python's built in sorted() function
         # will ensure the cards get sorted by value, then suit.
         if not self.cards:
             return False
@@ -198,6 +227,11 @@ class Hand(object):
         return True
 
     def has_exact_card(self, card_obj):
+        """
+        Returns a boolean specifying whether this hand already contains
+        this exact card (value and suit).
+        """
+
         for card in self.cards:
             if card.value == card_obj.get_value() and card.suit == card_obj.get_suit():
                 return True
@@ -205,6 +239,13 @@ class Hand(object):
         return False
 
     def add_card(self, card_obj):
+        """
+        Add a Card object to this hand if possible.
+        Throws a ValueError if the object is not a Card, a DuplicateCardError if the card
+        is already present in the hand, or a MaximumCardError if the hand is already
+        full.
+        """
+
         # This is not conventional Python; we could check attributes instead
         # (philosophy of duck typing) and only error if needed properties not found
         if not isinstance(card_obj, card.Card):
@@ -216,7 +257,8 @@ class Hand(object):
 
         # check if we are already at the maximum number of cards
         if len(self.cards) == self.MAXIMUM_CARDS:
-            raise MaximumCardError("Already have {0} cards in this hand".format(self.MAXIMUM_CARDS))
+            raise MaximumCardError("Already have {0} cards in this hand".format(
+                self.MAXIMUM_CARDS))
 
         self.cards.append(card_obj)
         self.sort_cards()
@@ -229,6 +271,10 @@ class Hand(object):
         return True
 
     def get_hand_type(self):
+        """
+        Find the type of hand represented by this object, using the check_() functions
+        in descending order. Sets the object's type property to the highest hand type.
+        """
         if not self.cards or not len(self.cards) == self.MAXIMUM_CARDS:
             raise MissingCardError("Must have exactly five cards in hand")
 
@@ -246,7 +292,8 @@ class Hand(object):
             """
 
             if not getattr(self, "check_{0}".format(type_name)):
-                raise CheckFunctionError("Cannot check hand for {0}; missing function".format(type_name))
+                raise CheckFunctionError("Cannot check hand for {0}; "
+                                         "missing function".format(type_name))
 
             if getattr(self, "check_{0}".format(type_name))():
                 self.type = type_value
@@ -255,6 +302,7 @@ class Hand(object):
         return True
 
     def set_rank_by_values(self):
+        """Set the rank property of this Hand by card values, a typical operation."""
         card_values = self.get_card_values()
 
         # reverse the card values for easier forward comparison with other Hand objects
@@ -263,6 +311,7 @@ class Hand(object):
         return True
 
     def check_straight_flush(self):
+        """Check if this hand is both a straight and a flush."""
         # definition: five cards in sequence, all of same suit
         if not self.cards or not len(self.cards) == self.MAXIMUM_CARDS:
             return False
@@ -275,11 +324,14 @@ class Hand(object):
         return self.check_straight()
 
     def check_four_of_a_kind(self):
-        # definition: four cards, any suit, same value
-        # use generic function to accomplish this
+        """
+        Use generic check_n_of_a_kind function to see
+        if four cards of the same value exist.
+        """
         return self.check_n_of_a_kind(4)
 
     def check_full_house(self):
+        """Check if the card contains a full house (1 three of a kind and 1 pair.)"""
         # definition: three matching cards of one value + two matching cards of another
         if not self.cards or not len(self.cards) == self.MAXIMUM_CARDS:
             return False
@@ -308,6 +360,7 @@ class Hand(object):
         return False
 
     def check_flush(self):
+        """Check if the hand contains a flush (all cards same suit)."""
         # definition: all cards same suit, high card wins
         # this means we have to drop the entire sequence into rank
         if not self.cards or not len(self.cards) == self.MAXIMUM_CARDS:
@@ -330,6 +383,7 @@ class Hand(object):
         return True
 
     def check_straight(self):
+        """Check if the hand contains a straight (sequential-valued cards)."""
         # condition 1: ace low (A = 1) - will appear as exactly 2, 3, 4, 5, 14 in values
         # condition 2: normal, no aces or ace high (A = 14)
         if not self.cards or not len(self.cards) == self.MAXIMUM_CARDS:
@@ -365,6 +419,7 @@ class Hand(object):
         return True
 
     def check_n_of_a_kind(self, n):
+        """Determine if N instances of the same-valued card exist in this hand."""
         if n > (self.MAXIMUM_CARDS - 1):
             return False
 
@@ -386,9 +441,14 @@ class Hand(object):
         return False
 
     def check_three_of_a_kind(self):
+        """
+        Use generic check_n_of_a_kind function to see
+        if three cards of the same value exist.
+        """
         return self.check_n_of_a_kind(3)
 
     def check_two_pair(self):
+        """Check if this hand contains at least two pairs."""
         if not self.cards or not len(self.cards) == self.MAXIMUM_CARDS:
             return False
 
@@ -426,6 +486,7 @@ class Hand(object):
         return True
 
     def get_pairs(self):
+        """Return a list of the pairs of cards present in this hand."""
         if not self.cards or not len(self.cards) == self.MAXIMUM_CARDS:
             return False
 
@@ -444,6 +505,7 @@ class Hand(object):
         return pairs
 
     def check_pair(self):
+        """Check if the hand contains a pair (two of a kind)"""
         if not self.cards or not len(self.cards) == self.MAXIMUM_CARDS:
             return False
 
@@ -454,8 +516,8 @@ class Hand(object):
         if not pairs or len(pairs) < 1:
             return False
 
-        # TODO: at this point, we could still have two pairs; decide how to handle
-        # this has already been somewhat documented
+        # At this point, we could still have two pairs, but this should not affect
+        # normal program operation. See considerations in test suite.
 
         # Take first pair as multiple
         self.multiple = pairs[0]
@@ -471,6 +533,7 @@ class Hand(object):
         return True
 
     def check_high_card(self):
+        """Check if the hand contains a high card and set ranking."""
         if not self.cards or not len(self.cards) == self.MAXIMUM_CARDS:
             return False
 

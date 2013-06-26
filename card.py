@@ -1,7 +1,16 @@
+"""
+This script is not directly executable and forms part of the objects for
+the handcompare application.
+"""
+
+# Card: Represents a single card.
+
 class InvalidCardError(Exception):
+    """Thrown when a Card object cannot be parsed or created properly."""
     pass
 
 class Card(object):
+    # Suit definitions. Provided as a dict for potential future text output.
     SUITS = {
         "H": "hearts",
         "C": "clubs",
@@ -9,6 +18,8 @@ class Card(object):
         "D": "diamonds",
     }
 
+    # Assign integer values to Jack through Ace. In this code, Ace is considered high
+    # and dealt with specially when considering a A-5 straight.
     LETTER_CARD_VALUES = {
         "J": 11,
         "Q": 12,
@@ -16,19 +27,25 @@ class Card(object):
         "A": 14,
     }
 
+    # Local properties for card value and suit.
     value = 0
     suit = ""
 
     def __repr__(self):
-        # For sorting purposes, always use value first and then suit; return a tuple
+        """For sorting purposes, always use value first and then suit; return a tuple"""
         return repr((self.value, self.suit))
 
     def __eq__(self, other):
-        # Equality operator. Check if value and suit match.
+        """Equality operator. Check if value and suit match."""
         return (self.value == other.get_value() and self.suit == other.get_suit())
 
     def _map_card_value(self, card):
-        # check if card is an integer; if not, catch exception and return predefined value
+        """
+        Internal mapping function. Check if card is an integer.
+        If not, catch exception and return predefined value.
+        Can throw a ValueError if the specified value is not between 2-A.
+        """
+
         try:
             card = int(card)
         except (ValueError, TypeError) as e:
@@ -47,9 +64,15 @@ class Card(object):
         return card
 
     def _check_card_suit(self, suit):
+        """Internal card suit validation function."""
         return suit in self.SUITS
 
     def __init__(self, card_value, card_suit):
+        """
+        Constructor. Set up a new object with specified value and suit.
+        Can throw an InvalidCardError if parsing the given value or suit fails.
+        """
+
         self.value = card_value
         self.suit = card_suit
 
@@ -64,7 +87,9 @@ class Card(object):
             raise InvalidCardError("Value of suit could not be parsed")
 
     def get_value(self):
+        """Accessor method for card value"""
         return int(self.value)
 
     def get_suit(self):
+        """Accessor method for card suit"""
         return self.suit

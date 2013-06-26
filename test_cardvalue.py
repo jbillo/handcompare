@@ -12,15 +12,17 @@ import card
 
 class TestCardValue(unittest.TestCase):
     def setUp(self):
+        """Designate shared objects for all test cases."""
         self.hc = handcompare.HandCompare()
         self.card = card.Card(2, "C")
 
     def tearDown(self):
+        """Explicitly delete objects during class destruction."""
         del self.hc
         del self.card
 
     def test_map_card_value(self):
-        # check for known card values so jack through ace are treated properly
+        """Check for known card values so jack through ace are treated properly."""
         known_values = [
             ["J", 11],
             ["Q", 12],
@@ -36,6 +38,7 @@ class TestCardValue(unittest.TestCase):
             self.assertRaises(ValueError, self.card._map_card_value, invalid_value)
 
     def test_check_card_suit(self):
+        """Check valid and invalid suits for cards."""
         # check for known suit values
         for valid_suit in ["C", "D", "H", "S"]:
             self.assertTrue(self.card._check_card_suit(valid_suit))
@@ -45,6 +48,7 @@ class TestCardValue(unittest.TestCase):
             self.assertFalse(self.card._check_card_suit(invalid_suit))
 
     def test_check_card_equal(self):
+        """Check card equivalency - whether they are the exact same card or not."""
         # check not equal for different suits
         card1 = card.Card(2, "H")
         card2 = card.Card(2, "C")
