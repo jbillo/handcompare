@@ -108,6 +108,11 @@ class TestHand(unittest.TestCase):
         extra_card = card.Card(7, "C")
         self.assertRaises(hand.MaximumCardError, self.hand.add_card, extra_card)
 
+        # try adding a duplicate card and checking for exception
+        self.hand.clear()
+        self.hand.add_card(card.Card(2, "C"))
+        self.assertRaises(hand.DuplicateCardError, self.hand.add_card, card.Card(2, "C"))
+
     def test_hand_type(self):
         """Check that get_hand_type returns the proper value"""
         # try with no cards and 1 card

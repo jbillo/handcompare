@@ -118,50 +118,74 @@ class TestHandCompare(unittest.TestCase):
         """
 
         # Check equality operators for sampling of hands
+        # Also test comparisons for gt/lt that should return false
         hand1 = self.load_default_hand("royal_flush")
         hand2 = self.load_default_hand("royal_flush_2")
         self.assertEqual(hand1, hand2)
+        self.assertLessEqual(hand1, hand2)
+        self.assertGreaterEqual(hand1, hand2)
+        self.assertFalse(hand1 > hand2)
+        self.assertFalse(hand1 < hand2)
+        self.assertFalse(hand2 > hand1)
+        self.assertFalse(hand2 < hand1)
 
         hand1 = self.load_default_hand("straight_flush")
         hand2 = self.load_default_hand("straight_flush_2")
         self.assertEqual(hand1, hand2)
+        self.assertLessEqual(hand1, hand2)
+        self.assertGreaterEqual(hand1, hand2)
+        self.assertFalse(hand1 > hand2)
+        self.assertFalse(hand1 < hand2)
+        self.assertFalse(hand2 > hand1)
+        self.assertFalse(hand2 < hand1)
 
         # Check gt operator for sampling of hands
         # Also test comparisons we know to be false to exercise early exits
         hand1 = self.load_default_hand("royal_flush")
         hand2 = self.load_default_hand("straight_flush")
+        self.assertNotEqual(hand1, hand2)
         self.assertGreater(hand1, hand2)
         self.assertFalse(hand1 < hand2)
+        self.assertFalse(hand1 == hand2)
+
 
         hand1 = self.load_default_hand("four_of_a_kind")
         hand2 = self.load_default_hand("three_of_a_kind")
+        self.assertNotEqual(hand1, hand2)
         self.assertGreater(hand1, hand2)
         self.assertFalse(hand1 < hand2)
+        self.assertFalse(hand1 == hand2)
 
         hand1 = self.load_default_hand("four_of_a_kind_5s")
         hand2 = self.load_default_hand("four_of_a_kind")
+        self.assertNotEqual(hand1, hand2)
         self.assertGreater(hand1, hand2)
         self.assertFalse(hand1 < hand2)
+        self.assertFalse(hand1 == hand2)
 
         # Check le operator for sampling of hands
         # Also test comparisons we know to be false to exercise early exits
         hand1 = self.load_default_hand("full_house")
         hand2 = self.load_default_hand("four_of_a_kind")
+        self.assertNotEqual(hand1, hand2)
         self.assertLess(hand1, hand2)
         self.assertFalse(hand1 > hand2)
 
         hand1 = self.load_default_hand("four_of_a_kind")
         hand2 = self.load_default_hand("four_of_a_kind_5s")
+        self.assertNotEqual(hand1, hand2)
         self.assertLess(hand1, hand2)
         self.assertFalse(hand1 > hand2)
 
         hand1 = self.load_default_hand("high_card")
         hand2 = self.load_default_hand("pair")
+        self.assertNotEqual(hand1, hand2)
         self.assertLess(hand1, hand2)
         self.assertFalse(hand1 > hand2)
 
         hand1 = self.load_default_hand("high_card_less")
         hand2 = self.load_default_hand("high_card")
+        self.assertNotEqual(hand1, hand2)
         self.assertLess(hand1, hand2)
         self.assertFalse(hand1 > hand2)
 
