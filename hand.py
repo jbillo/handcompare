@@ -289,6 +289,9 @@ class Hand(object):
             gets added, but the corresponding check_royal_sampler function does not exist.
             In this case, the hand will never get set to the designated type as it can't
             be checked for.
+
+            This statement will not get exercised by automated testing as we define all
+            the possible hand functions in this file.
             """
 
             if not getattr(self, "check_{0}".format(type_name)):
@@ -454,9 +457,9 @@ class Hand(object):
 
         unique_values = self.get_unique_card_values()
 
-        if len(unique_values) < 2:
-            # must have at least 2 unique values for two pair
-            return False
+        # We could try to exit early here by checking the len(unique_values) < 2,
+        # but the hand must have at least four cards and will therefore always
+        # have at least two unique values.
 
         if len(unique_values) > (self.MAXIMUM_CARDS - 2):
             # cannot have more than 3 unique values for two pair
@@ -465,9 +468,10 @@ class Hand(object):
         # For each unique value, check that there is at least 2 of a kind for 2 of them
         pairs = self.get_pairs()
 
-        # Can't have three pair or one pair - consistency check
-        if not pairs or len(pairs) != 2:
-            return False
+        # The len(unique_values) statement above enforces one, two or three unique
+        # card values. As such, len(pairs) will always return 2 here. Again, a possible
+        # place for a consistency check, but the statement above enforces it in a 5 card
+        # deck.
 
         # Which is the highest pair? This becomes the 'multiple' property
         # Then the other pair, followed by highest card, goes into rank

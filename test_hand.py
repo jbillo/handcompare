@@ -128,6 +128,18 @@ class TestHand(unittest.TestCase):
         self.assertEqual(str(self.hand),
                          "[(2, 'D'), (3, 'C'), (4, 'S'), (5, 'H'), (7, 'D')]")
 
+    def test_n_of_a_kind(self):
+        """Check that n-of-a-kind provides correct errors - we check 4 and 3 below."""
+        self.hand.clear()
+        self.assertFalse(self.hand.check_n_of_a_kind(4))
+        self.set_three_of_a_kind()
+        self.assertFalse(self.hand.check_n_of_a_kind(5))
+
+    def test_get_pairs(self):
+        """Check that get_pairs() returns False when there are not enough cards"""
+        self.hand.clear()
+        self.assertFalse(self.hand.get_pairs())
+
     def test_straight_flush(self):
         """Check that straight flush detection functions properly"""
         self.hand.clear()
@@ -308,6 +320,8 @@ class TestHand(unittest.TestCase):
         self.hand.add_card(card.Card("K", "D"))
         self.assertFalse(self.hand.check_two_pair())
 
+        # check hand without at least two unique cards
+
         # check full house hand
         self.set_full_house()
         self.assertTrue(self.hand.check_two_pair())
@@ -333,7 +347,7 @@ class TestHand(unittest.TestCase):
         """Check that single pair detection is working properly"""
         # check empty hand
         self.hand.clear()
-        self.assertFalse(self.hand.check_two_pair())
+        self.assertFalse(self.hand.check_pair())
 
         # check one pair hand
         self.hand.add_card(card.Card("J", "D"))
