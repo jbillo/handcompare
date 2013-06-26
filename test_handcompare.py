@@ -127,26 +127,34 @@ class TestHandCompare(unittest.TestCase):
         self.assertEqual(hand1, hand2)
 
         # Check gt operator for sampling of hands
+        # Also test comparisons we know to be false to exercise early exits
         hand1 = self.load_default_hand("royal_flush")
         hand2 = self.load_default_hand("straight_flush")
         self.assertGreater(hand1, hand2)
+        self.assertFalse(hand1 < hand2)
 
         hand1 = self.load_default_hand("four_of_a_kind")
         hand2 = self.load_default_hand("three_of_a_kind")
         self.assertGreater(hand1, hand2)
+        self.assertFalse(hand1 < hand2)
 
         # Check le operator for sampling of hands
+        # Also test comparisons we know to be false to exercise early exits
         hand1 = self.load_default_hand("full_house")
         hand2 = self.load_default_hand("four_of_a_kind")
         self.assertLess(hand1, hand2)
+        self.assertFalse(hand1 > hand2)
 
         hand1 = self.load_default_hand("high_card")
         hand2 = self.load_default_hand("pair")
         self.assertLess(hand1, hand2)
+        self.assertFalse(hand1 > hand2)
 
         hand1 = self.load_default_hand("high_card_less")
         hand2 = self.load_default_hand("high_card")
         self.assertLess(hand1, hand2)
+        self.assertFalse(hand1 > hand2)
+
 
     def test_hand_compare_wikipedia(self):
         # TODO: Use specific testcases from Wikipedia article
@@ -169,7 +177,7 @@ class TestHandCompare(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # Empty sys.argv in case this application is accidentally run with hands
+    # Empty sys.argv in case this application is accidentally run with hand strings
     # or other arguments specified - Python's unit testing mechanism will attempt to
     # run specific test cases
     sys.argv = [sys.argv[0]]

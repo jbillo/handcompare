@@ -87,4 +87,19 @@ Traditionally my team employs SVN for change control. I have been the main team 
 * Google Python style guide for influence: <http://google-styleguide.googlecode.com/svn/trunk/pyguide.html>
     * Specific use of `pychecker` to detect potential issues with code <http://pychecker.sourceforge.net/>
 * PEP-0257 for preferred docstring syntax: <http://www.python.org/dev/peps/pep-0257/>
+* `coverage` module for testing code coverage: <http://nedbatchelder.com/code/coverage/>, running `coverage run test_handcompare.py; coverage report -m` to increase coverage of tests
 
+A recent `coverage` run provided the following results:
+
+    Name               Stmts   Miss  Cover   Missing
+    ------------------------------------------------
+    card                  37      0   100%
+    default_hands          1      0   100%
+    hand                 262     33    87%   69, 82, 88, 98, 100, 108-115, 124, 128, 130, 140, 142, 150-157, 162, 165, 168, 174, 178, 182, 237, 256, 295, 352-354, 424, 459, 470, 491, 510
+    handcompare           77     32    58%   83, 109, 118-153, 161-175, 180-181
+    test_cardvalue        33      0   100%
+    test_hand            204      0   100%
+    test_handcompare      83      0   100%
+    ------------------------------------------------
+    TOTAL                697     65    91%
+    TOTAL                693     66    90%

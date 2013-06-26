@@ -47,6 +47,20 @@ class TestCardValue(unittest.TestCase):
         for invalid_suit in ["X", " ", "", 0, None]:
             self.assertFalse(self.card._check_card_suit(invalid_suit))
 
+        # check that constructing a card is successful and fails appropriately:
+
+        # check card value failure
+        self.assertRaises(card.InvalidCardError, card.Card, 20, "C")
+
+        # check card value success
+        self.assertTrue(card.Card(10, "C"))
+
+        # check card suit failure
+        self.assertRaises(card.InvalidCardError, card.Card, 10, "X")
+
+        # check card suit failure
+        self.assertTrue(card.Card(10, "H"))
+
     def test_check_card_equal(self):
         """Check card equivalency - whether they are the exact same card or not."""
         # check not equal for different suits

@@ -117,6 +117,12 @@ class TestHand(unittest.TestCase):
 
         # TODO: what else are we testing here?
 
+    def test_hand_repr(self):
+        """Check that the string representation of the hand matches expected value"""
+        self.set_bad_hand()
+        self.assertEqual(str(self.hand),
+                         "[(2, 'D'), (3, 'C'), (4, 'S'), (5, 'H'), (7, 'D')]")
+
     def test_straight_flush(self):
         """Check that straight flush detection functions properly"""
         self.hand.clear()
