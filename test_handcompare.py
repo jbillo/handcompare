@@ -209,6 +209,28 @@ class TestHandCompare(unittest.TestCase):
         hand2 = self.load_default_hand("wp_four_of_a_kind_4")
         self.assertGreater(hand1, hand2)
 
+    def test_hand_sanity(self):
+        """Check that hand sanity validation is functioning properly."""
+
+        # Check that when the same card gets used across two hands,
+        # it throws an exception.
+        hand1 = self.load_default_hand("wp_four_of_a_kind_3")
+        hand2 = self.load_default_hand("wp_four_of_a_kind_4")
+        self.assertRaises(handcompare.InvalidHandError, self.hc.hand_sanity, hand1, hand2)
+
+        # Check that hands are sane when they don't contain any of the same card.
+        hand1 = self.load_default_hand("straight_flush")
+        hand2 = self.load_default_hand("straight_flush_ace_low")
+        self.assertTrue(self.hc.hand_sanity(hand1, hand2))
+
+    def test_main(self):
+        """Check that the main application is functioning properly."""
+
+        # Predefine specific sys.argv contents
+        orig_sys_argv = sys.argv
+
+        # TODO: how do we determine sys.exit stuff here?
+
 
 if __name__ == '__main__':
     # Empty sys.argv in case this application is accidentally run with hand strings

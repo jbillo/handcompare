@@ -68,7 +68,8 @@ class HandCompare(object):
     def parse_hand_string(self, hand_string):
         """
         Given a string, uses parse_card_string to turn that string into Card objects,
-        and then assembles a Hand object from those cards.
+        and then assembles a Hand object from those cards. Can throw an InvalidHandError
+        when the hand_string does not parse properly.
         """
 
         if not hand_string or not hand_string.strip():
@@ -79,6 +80,8 @@ class HandCompare(object):
 
         # check if we can split this and the resulting list has enough elements
         split_cards = hand_string.split(",")
+
+        # TODO: when would this be the case?
         if len(split_cards) != self.CARDS_IN_HAND:
             raise InvalidHandError("Resulting split hand did not contain correct number of cards: {0}".format(len(split_cards)))
 
