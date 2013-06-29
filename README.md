@@ -45,8 +45,8 @@ Current options include:
                     This option is exposed for consistency as the test suite does
                     not enforce the "unique cards" restriction when comparing hands.
 
-    --verbose       Output details on hand comparison, including type, multiple
-                    and ranking for each of the hands.
+    --verbose       Output details on hand comparison, including attributes,
+                    multiple and type for each of the hands.
 
 For an example use of the `--no-sanity` parameter to check two straight flushes:
 

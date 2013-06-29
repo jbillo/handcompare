@@ -212,8 +212,8 @@ Current options include:
                 This option is exposed for consistency as the test suite does
                 not enforce the "unique cards" restriction when comparing hands.
 
---verbose       Output details on hand comparison, including attributes, multiple
-                and type for each of the hands.
+--verbose       Output details on hand comparison, including attributes,
+                multiple and type for each of the hands.
         """.format(sys.argv[0])
 
         sys.exit(1)
