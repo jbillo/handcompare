@@ -18,7 +18,7 @@ class TestCoreApp(unittest.TestCase):
 
         # Suppress sys.stdout and sys.stderr until this test case cleans up.
         # Can't just set sys.stdout/err to None because it needs to be writable.
-        # Create a /dev/null object and clean up on exit.
+        # Create a /dev/null object and clean up on tearDown().
         self.devnull = open(os.devnull, 'w')
         self.stdout = sys.stdout
         sys.stdout = self.devnull
@@ -54,3 +54,19 @@ class TestCoreApp(unittest.TestCase):
         # exits the application
         sys.argv = ("handcompare.py", "5C,6C,7C,8C,9C", "5C,4H,5H,6H,7H")
         self.assertRaises(SystemExit, self.hc.main)
+
+        # Check result for hand 1 winning
+        sys.argv = ("handcompare.py", "5D,6D,7D,8D,9D", "4C,5C,6C,7C,8C")
+        self.assertEqual(self.hc.main(), handcompare.HAND1_WINS)
+
+        # Check result for hand 2 winning
+        sys.argv = ("handcompare.py", "JC,JD,JH,4S,5S", "KC,KS,KD,AS,AC")
+        self.assertEqual(self.hc.main(), handcompare.HAND2_WINS)
+
+        # Check result for hands drawing
+        sys.argv = ("handcompare.py", "5C,6C,7C,8H,9H", "9S,8S,7D,6D,5D")
+        self.assertEqual(self.hc.main(), handcompare.HANDS_DRAW)
+        self.assertEqual(self.hc.main(), handcompare.HANDS_DRAW)
+
+        # Reset sys.argv as all tests are done
+        sys.argv = old_argv

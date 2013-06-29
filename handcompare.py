@@ -13,6 +13,11 @@ import sys
 import card
 import hand
 
+# Define return/main() exit codes for win/draw conditionals
+HAND1_WINS = 2
+HAND2_WINS = 3
+HANDS_DRAW = 4
+
 # define custom exception classes
 class MissingArgumentError(Exception):
     """Exception thrown when command-line arguments are improperly provided."""
@@ -81,12 +86,8 @@ class HandCompare(object):
         if hand_string.count(",") != (self.CARDS_IN_HAND - 1):
             raise InvalidHandError("Hand did not contain correct number of comma-separated cards; original hand: {0}".format(hand_string))
 
-        # check if we can split this and the resulting list has enough elements
+        # Split hand; our count precondition ensures the result list has enough elements
         split_cards = hand_string.split(",")
-
-        # TODO: when would this be the case?
-        if len(split_cards) != self.CARDS_IN_HAND:
-            raise InvalidHandError("Resulting split hand did not contain correct number of cards: {0}".format(len(split_cards)))
 
         # create Hand object and populate it with cards; this will throw exceptions
         # on any invalid conditions (duplicate cards, etc)
@@ -152,10 +153,13 @@ class HandCompare(object):
         # Compare hands and print output
         if hand1 > hand2:
             print "Hand 1 is the winning hand"
+            return HAND1_WINS
         elif hand2 > hand1:
             print "Hand 2 is the winning hand"
+            return HAND2_WINS
         else:
             print "Hand 1 and 2 draw"
+            return HANDS_DRAW
 
 
     def usage(self):
@@ -182,6 +186,7 @@ Current options include:
 
 
 # Entry point for application so this module can be imported by other applications
-if __name__ == '__main__':
+# Do not test this function with code coverage - simple entry point
+if __name__ == '__main__':      # pragma: no cover
     hc = HandCompare()
     hc.main()
