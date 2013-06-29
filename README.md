@@ -75,6 +75,8 @@ Most Python scripts I write for internal usage have no traditional development m
 
 Traditionally my team employs SVN for change control. I have been the main team member leading the charge to move these scripts and internal documentation to a GitHub Enterprise installation.
 
+In short, though, test-driven development practices have been invaluable in this exercise and have enforced a level of code quality that provides more confidence and coverage.
+
 ## Resources
 
 * Python `.gitignore` file copied from GitHub: <https://github.com/github/gitignore/blob/master/Python.gitignore>
@@ -89,7 +91,7 @@ Traditionally my team employs SVN for change control. I have been the main team 
     * Specific use of `pychecker` to detect potential issues with code <http://pychecker.sourceforge.net/>
 * PEP-0257 for preferred docstring syntax: <http://www.python.org/dev/peps/pep-0257/>
 * `coverage` module for testing code coverage: <http://nedbatchelder.com/code/coverage/>, running `coverage run test_handcompare.py; coverage report -m` to increase coverage of tests
-    * Over the course of development, using this tool, code coverage increased from 90% to 99% and at least two bugs were discovered and fixed
+    * Over the course of development, using this tool, code coverage increased from 90% to 99% and at least two bugs were discovered and fixed.
 
 A recent `coverage` run provided the following results:
 
@@ -105,3 +107,5 @@ A recent `coverage` run provided the following results:
     test_handcompare     132      0   100%
     ------------------------------------------------
     TOTAL                806      3    99%
+
+Detailed descriptions for uncovered statements are included in the inline comments.

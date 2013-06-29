@@ -219,6 +219,42 @@ class TestHandCompare(unittest.TestCase):
         hand2 = self.load_default_hand("wp_full_house_4")
         self.assertGreater(hand1, hand2)
 
+        hand1 = self.load_default_hand("wp_flush_1")
+        hand2 = self.load_default_hand("wp_flush_2")
+        self.assertGreater(hand1, hand2)
+
+        hand1 = self.load_default_hand("wp_flush_3")
+        hand2 = self.load_default_hand("wp_flush_4")
+        self.assertGreater(hand1, hand2)
+
+        hand1 = self.load_default_hand("wp_straight_1")
+        hand2 = self.load_default_hand("wp_straight_2")
+        self.assertGreater(hand1, hand2)
+
+        hand1 = self.load_default_hand("wp_straight_3")
+        hand2 = self.load_default_hand("wp_straight_4")
+        self.assertEqual(hand1, hand2)
+
+        hand1 = self.load_default_hand("wp_three_of_a_kind_1")
+        hand2 = self.load_default_hand("wp_three_of_a_kind_2")
+        self.assertGreater(hand1, hand2)
+
+        hand1 = self.load_default_hand("wp_three_of_a_kind_3")
+        hand2 = self.load_default_hand("wp_three_of_a_kind_4")
+        self.assertGreater(hand1, hand2)
+
+        hand1 = self.load_default_hand("wp_two_pair_1")
+        hand2 = self.load_default_hand("wp_two_pair_2")
+        self.assertGreater(hand1, hand2)
+
+        hand1 = self.load_default_hand("wp_two_pair_3")
+        hand2 = self.load_default_hand("wp_two_pair_4")
+        self.assertGreater(hand1, hand2)
+
+        hand1 = self.load_default_hand("wp_two_pair_5")
+        hand2 = self.load_default_hand("wp_two_pair_6")
+        self.assertGreater(hand1, hand2)
+
     def test_hand_sanity(self):
         """Check that hand sanity validation is functioning properly."""
 
