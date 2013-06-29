@@ -416,3 +416,7 @@ class TestHand(unittest.TestCase):
         hand2.multiple = 0
         self.assertFalse(hand1 > hand2)
         self.assertFalse(hand1 < hand2)
+
+        # Set ranks to different lengths and check consistency
+        hand1.rank = [0, 0]
+        self.assertRaises(hand.CompareError, hand1.check_rank_consistency, hand2)
