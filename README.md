@@ -82,11 +82,12 @@ For debugging, I used the content in `generate_hands.py` to enumerate the hands 
     sh generate_hands.txt > generate_hands.out
     vi generate_hands.out
 
-# Assumptions
+# Assumptions and possible improvements
 
 * In a traditional five-card draw or Texas Hold-Em poker game, the game is played with only one deck of 52 cards. This choice is made to preserve other elements (odds calculation changes with multiple decks.) Thus, duplicate cards are rejected and are considered invalid input. Each hand may not have the same card repeated twice or more.
     * In normal execution, Hand 2 may not contain any of the same cards as in Hand 1.  There is a sanity check that will fail during normal execution. Some of the test case scenarios exercised to confirm proper hand ranking behaviour rely on the same cards being in Hand 1 and Hand 2. This option can be disabled at runtime with a `--no-sanity` parameter passed after the hand strings.
     * Possible improvement: allow for multi-deck play, relaxing these restrictions - although in real life scenarios, these games are casino variants, not traditional poker and would have different rules (wild cards) that would affect the hand ranking process.
+* Hand comparison amongst multiple hands: as a future improvement, one could
 
 # Background information and methodology
 
@@ -112,21 +113,21 @@ In short, though, test-driven development practices have been invaluable in this
     * Specific use of `pychecker` to detect potential issues with code <http://pychecker.sourceforge.net/>
 * PEP-0257 for preferred docstring syntax: <http://www.python.org/dev/peps/pep-0257/>
 * `coverage` module for testing code coverage: <http://nedbatchelder.com/code/coverage/>, running `coverage run test_handcompare.py; coverage report -m` to increase coverage of tests
-    * Over the course of development, using this tool, code coverage increased from 90% to 99% and at least two bugs were discovered and fixed.
+    * Over the course of development, using this tool, total code coverage increased from 90% to 99% and at least two bugs were discovered and fixed.
 
-A recent `coverage` run provided the following results:
+A recent `coverage report -m` run provided the following results:
 
     Name               Stmts   Miss  Cover   Missing
     ------------------------------------------------
     card                  37      0   100%
     default_hands          1      0   100%
-    hand                 261      1    99%   303
-    handcompare           80      2    98%   190-191
+    hand                 270      1    99%   331
+    handcompare           93      2    98%   224-225
     test_cardvalue        33      0   100%
-    test_coreapp          34      0   100%
-    test_hand            228      0   100%
-    test_handcompare     132      0   100%
+    test_coreapp          43      0   100%
+    test_hand            240      0   100%
+    test_handcompare     165      0   100%
     ------------------------------------------------
-    TOTAL                806      3    99%
+    TOTAL                882      3    99%
 
 Detailed descriptions for uncovered statements are included in the inline comments.
