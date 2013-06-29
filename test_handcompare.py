@@ -233,6 +233,7 @@ class TestHandCompare(unittest.TestCase):
 
         hand1 = self.load_default_hand("wp_straight_3")
         hand2 = self.load_default_hand("wp_straight_4")
+        # these are specifically equal
         self.assertEqual(hand1, hand2)
 
         hand1 = self.load_default_hand("wp_three_of_a_kind_1")
@@ -253,6 +254,22 @@ class TestHandCompare(unittest.TestCase):
 
         hand1 = self.load_default_hand("wp_two_pair_5")
         hand2 = self.load_default_hand("wp_two_pair_6")
+        self.assertGreater(hand1, hand2)
+
+        hand1 = self.load_default_hand("wp_pair_1")
+        hand2 = self.load_default_hand("wp_pair_2")
+        self.assertGreater(hand1, hand2)
+
+        hand1 = self.load_default_hand("wp_pair_3")
+        hand2 = self.load_default_hand("wp_pair_4")
+        self.assertGreater(hand1, hand2)
+
+        hand1 = self.load_default_hand("wp_high_card_1")
+        hand2 = self.load_default_hand("wp_high_card_2")
+        self.assertGreater(hand1, hand2)
+
+        hand1 = self.load_default_hand("wp_high_card_3")
+        hand2 = self.load_default_hand("wp_high_card_4")
         self.assertGreater(hand1, hand2)
 
     def test_hand_sanity(self):

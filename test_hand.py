@@ -120,7 +120,13 @@ class TestHand(unittest.TestCase):
         self.assertRaises(hand.MissingCardError, self.hand.get_hand_type)
         self.hand.add_card(card.Card(2, "D"))
 
-        # TODO: what else are we testing here?
+        # Test specific hand types - this will help if someone changes values
+        self.set_three_of_a_kind()
+        self.assertEqual(self.hand.get_hand_type(), 3)
+        self.set_full_house()
+        self.assertEqual(self.hand.get_hand_type(), 6)
+        self.set_bad_hand()
+        self.assertEqual(self.hand.get_hand_type(), 0)
 
     def test_hand_repr(self):
         """Check that the string representation of the hand matches expected value"""

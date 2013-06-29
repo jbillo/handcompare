@@ -55,4 +55,12 @@ DEFAULT_HANDS = {
     "wp_two_pair_4"             : "9H,9S,5H,5D,KC",
     "wp_two_pair_5"             : "4S,4C,3S,3H,KD",
     "wp_two_pair_6"             : "4H,4D,3D,3C,10S",
+    "wp_pair_1"                 : "10C,10S,6S,4H,2H",
+    "wp_pair_2"                 : "9H,9C,AH,QD,10D",
+    "wp_pair_3"                 : "2D,2H,8S,5C,4C",
+    "wp_pair_4"                 : "2C,2S,8C,5H,3H",
+    "wp_high_card_1"            : "AD,10D,9S,5C,4C",
+    "wp_high_card_2"            : "KC,QD,JS,8H,7H",
+    "wp_high_card_3"            : "AC,QC,7D,5H,2C",
+    "wp_high_card_4"            : "AD,10D,9S,5C,4C",
 }

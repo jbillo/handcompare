@@ -307,7 +307,7 @@ class Hand(object):
                 self.type = type_value
                 break
 
-        return True
+        return self.type
 
     def set_rank_by_values(self):
         """Set the rank property of this Hand by card values, a typical operation."""
