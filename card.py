@@ -5,9 +5,11 @@ the handcompare application.
 
 # Card: Represents a single card.
 
+
 class InvalidCardError(Exception):
     """Thrown when a Card object cannot be parsed or created properly."""
     pass
+
 
 class Card(object):
     # Suit definitions. Provided as a dict for potential future text output.

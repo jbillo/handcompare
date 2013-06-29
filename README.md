@@ -116,6 +116,8 @@ In short, though, test-driven development practices have been invaluable in this
 * Google Python style guide for influence: <http://google-styleguide.googlecode.com/svn/trunk/pyguide.html>
     * Specific use of `pychecker` to detect potential issues with code <http://pychecker.sourceforge.net/>
 * PEP-0257 for preferred docstring syntax: <http://www.python.org/dev/peps/pep-0257/>
+* `flake8` for PEP-8 style compliance, <https://pypi.python.org/pypi/flake8>
+    * BBEdit helper script for `flake8`: <https://gist.github.com/coryalder/3317713>
 * `coverage` module for testing code coverage: <http://nedbatchelder.com/code/coverage/>, running `coverage run test_handcompare.py; coverage report -m` to increase coverage of tests
     * Over the course of development, using this tool, total code coverage increased from 90% to 99% and at least two bugs were discovered and fixed.
 
