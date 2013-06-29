@@ -18,14 +18,20 @@ HAND1_WINS = 2
 HAND2_WINS = 3
 HANDS_DRAW = 4
 
-# define custom exception classes
+# Custom exception classes
+
+
 class MissingArgumentError(Exception):
     """Exception thrown when command-line arguments are improperly provided."""
     pass
 
+
 class InvalidHandError(Exception):
     """Exception thrown when a hand is inconsistent."""
     pass
+
+# HandCompare main class
+
 
 class HandCompare(object):
     """
@@ -153,7 +159,7 @@ class HandCompare(object):
                 self.hand_sanity(hand1, hand2)
             except InvalidHandError:
                 print ("Error: Duplicate cards found across both hands. To disable, "
-                      "use the --no-sanity option.")
+                       "use the --no-sanity option.")
                 self.usage()
 
         # Check for verbosity level
@@ -184,12 +190,16 @@ class HandCompare(object):
         # underscores with spaces and title case for readability.
 
         self.verbose_output = "Hand 1: {0}, multiple {1}, rank {2}\n".format(
-              hand1.get_type_text().replace("_", " ").title(), hand1.get_multiple(),
-              hand1.get_rank())
+            hand1.get_type_text().replace("_", " ").title(),
+            hand1.get_multiple(),
+            hand1.get_rank()
+        )
 
         self.verbose_output += "Hand 2: {0}, multiple {1}, rank {2}\n\n".format(
-            hand2.get_type_text().replace("_", " ").title(), hand2.get_multiple(),
-            hand2.get_rank())
+            hand2.get_type_text().replace("_", " ").title(),
+            hand2.get_multiple(),
+            hand2.get_rank()
+        )
 
         print self.verbose_output
 
