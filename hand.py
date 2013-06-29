@@ -42,8 +42,8 @@ class Hand(object):
     # type: hand type (flush, straight, pair, etc...)
     type = 0
 
-    # rank: rank of winning hand (straight = highest card value; could be a tuple)
-    rank = 0
+    # rank: rank of winning hand (a descending list of card values)
+    rank = [0]
 
     # multiple: in pair+ situations, contains the value of pair+s (3x 8's = 8)
     multiple = 0
@@ -87,19 +87,14 @@ class Hand(object):
         elif self.get_multiple() < other.get_multiple():
             return False
 
+        # stop-gap: raise exception if the comparison functions would fail
+        # this ensures data integrity and is a good way to find problems in batch runs
+        if not self.check_rank_consistency(other):
+            return False
+
         # at this point hand multiples are equal, check rank (list)
         self_rank = self.get_rank()
         other_rank = other.get_rank()
-
-        # stop-gap: raise exception if the comparison functions
-        # this ensures data integrity and is a good way to find problems in batch runs
-        # TODO: check when this would be the case
-        if self_rank == other_rank == 0:
-            # ranks are equal at zero
-            return False
-        elif len(self_rank) != len(other_rank):
-            raise CompareError("Length of hand rankings do not match: "
-                               "{0} and {1}".format(self_rank, other_rank))
 
         # find the first element that doesn't match
         for rank_index in range(0, len(self_rank)):
@@ -130,18 +125,14 @@ class Hand(object):
         elif other.get_multiple() < self.get_multiple():
             return False
 
+        # stop-gap: raise exception if the comparison functions would fail
+        # this ensures data integrity and is a good way to find problems in batch runs
+        if not self.check_rank_consistency(other):
+            return False
+
         # at this point hand multiples are equal, check rank (list)
         self_rank = self.get_rank()
         other_rank = other.get_rank()
-
-        # stop-gap: raise exception if the comparison functions
-        # this ensures data integrity and is a good way to find problems in batch runs
-        if self_rank == other_rank == 0:
-            # ranks are equal at zero
-            return False
-        elif len(self_rank) != len(other_rank):
-            raise CompareError("Length of hand rankings do not match: "
-                               "{0} and {1}".format(self_rank, other_rank))
 
         # find the first element that doesn't match
         for rank_index in range(0, len(self_rank)):
@@ -182,11 +173,24 @@ class Hand(object):
         """!= operator: convenience function - just return inverse of __eq__"""
         return not (self.__eq__(other))
 
+    def check_rank_consistency(self, other):
+        """Stop-gap in case comparison functions would not be able to compute rank"""
+
+        if [0] == self.rank == other.get_rank():
+            # ranks are equal at a list of zero elements
+            return False
+        elif len(self.get_rank()) != len(other.get_rank()):
+            raise CompareError("Length of hand rankings do not match: "
+                               "{0} and {1}".format(self.get_rank(), other.get_rank()))
+
+        return True
+
     def clear(self):
         """Helper: Reset hand and return it to zero cards with no rank"""
         self.cards = []
-        self.rank = 0
+        self.type = 0
         self.multiple = 0
+        self.rank = [0]
 
     def get_cards(self):
         """Accessor: get list of Card objects"""

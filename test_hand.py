@@ -398,3 +398,21 @@ class TestHand(unittest.TestCase):
         import default_hands
         for value in default_hands.DEFAULT_HANDS.values():
             self.hand = handcompare.HandCompare().parse_hand_string(value)
+
+    def test_check_rank_consistency(self):
+        # Check rank consistency with mocked up hands
+        hand1 = hand.Hand()
+        hand2 = hand.Hand()
+
+        # Override ranking properties manually and check operators
+        hand1.rank = [0]
+        hand2.rank = [0]
+        self.assertFalse(hand1.check_rank_consistency(hand2))
+
+        # Set types and multiples equal to zero
+        hand1.type = 0
+        hand2.type = 0
+        hand1.multiple = 0
+        hand2.multiple = 0
+        self.assertFalse(hand1 > hand2)
+        self.assertFalse(hand1 < hand2)

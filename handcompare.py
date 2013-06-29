@@ -186,7 +186,6 @@ Current options include:
 
 
 # Entry point for application so this module can be imported by other applications
-# Do not test this function with code coverage - simple entry point
-if __name__ == '__main__':      # pragma: no cover
+if __name__ == '__main__':
     hc = HandCompare()
     hc.main()
