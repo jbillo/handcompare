@@ -84,10 +84,14 @@ For debugging, I used the content in `generate_hands.py` to enumerate the hands 
 
 # Assumptions and possible improvements
 
-* In a traditional five-card draw or Texas Hold-Em poker game, the game is played with only one deck of 52 cards. This choice is made to preserve other elements (odds calculation changes with multiple decks.) Thus, duplicate cards are rejected and are considered invalid input. Each hand may not have the same card repeated twice or more.
-    * In normal execution, Hand 2 may not contain any of the same cards as in Hand 1.  There is a sanity check that will fail during normal execution. Some of the test case scenarios exercised to confirm proper hand ranking behaviour rely on the same cards being in Hand 1 and Hand 2. This option can be disabled at runtime with a `--no-sanity` parameter passed after the hand strings.
-    * Possible improvement: allow for multi-deck play, relaxing these restrictions - although in real life scenarios, these games are casino variants, not traditional poker and would have different rules (wild cards) that would affect the hand ranking process.
-* Hand comparison amongst multiple hands: as a future improvement, one could
+In a traditional five-card draw or Texas Hold-Em poker game, the game is played with only one deck of 52 cards. This choice is made to preserve other elements (odds calculation changes with multiple decks.) Thus, duplicate cards are rejected and are considered invalid input. Each hand may not have the same card repeated twice or more.
+
+In normal execution, Hand 2 may not contain any of the same cards as in Hand 1.  There is a sanity check that will fail during normal execution. Some of the test case scenarios exercised to confirm proper hand ranking behaviour rely on the same cards being in Hand 1 and Hand 2. This option can be disabled at runtime with a `--no-sanity` parameter passed after the hand strings.
+
+* Possible improvement: allow for multi-deck play, relaxing these restrictions - although
+in real life scenarios, these games are casino variants, not traditional poker and would have different rules (wild cards) that would affect the hand ranking process.
+
+As a future improvement, hand comparison amongst multiple hands (more than two) could be done easily. The naive approach would be to compare hand 1 to hand 2, then compare the higher of the two to the next subsequent hand - finally outputting the highest result. For efficiency and scalability, a smarter application would aggressively employ short-circuit evaluation: a comparator object could try to rapidly eliminate lowest ranked hands, followed by lowest multiples, then finally progress to card rankings.
 
 # Background information and methodology
 
