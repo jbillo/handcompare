@@ -93,6 +93,7 @@ class Hand(object):
 
         # stop-gap: raise exception if the comparison functions
         # this ensures data integrity and is a good way to find problems in batch runs
+        # TODO: check when this would be the case
         if self_rank == other_rank == 0:
             # ranks are equal at zero
             return False

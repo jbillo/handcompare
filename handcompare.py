@@ -1,7 +1,10 @@
 #!/usr/bin/env python
 
 """
-handcompare - application for comparing poker hands
+handcompare
+
+Application for comparing poker hands
+
 Jake Billo <jake@jakebillo.com>
 """
 
@@ -107,7 +110,8 @@ class HandCompare(object):
         for card in h1_cards:
             for comp_card in h2_cards:
                 if card == comp_card:
-                    raise InvalidHandError("Same card ({0}) exists in both hands".format(card))
+                    raise InvalidHandError(
+                        "Same card ({0}) exists in both hands".format(card))
 
         return True
 
@@ -153,7 +157,6 @@ class HandCompare(object):
         else:
             print "Hand 1 and 2 draw"
 
-        sys.exit(0)
 
     def usage(self):
         """

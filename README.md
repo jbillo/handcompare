@@ -20,7 +20,7 @@ From a terminal, run:
 
     python /path/to/handcompare/handcompare.py [hand1] [hand2] <options>
 
-`hand1` and `hand2` are each comma-separated strings representing a hand of 5 cards. Cards are given as a number from 2 to 10, or the character J/Q/K/A for Jack/Queen/King/Ace, followed by a suit character (*C*lubs, *D*iamonds, *H*earts or *S*pades.) For example, the following hand:
+`hand1` and `hand2` are each comma-separated strings representing a hand of 5 cards. Cards are given as a number from 2 to 10, or the character J/Q/K/A for *J*ack/*Q*ueen/*K*ing/*A*ce, followed by a suit character (*C*lubs, *D*iamonds, *H*earts or *S*pades.) For example, the following hand:
 
     2C,3H,4D,5S,10C
 
@@ -83,11 +83,13 @@ Traditionally my team employs SVN for change control. I have been the main team 
 * Python `unittest` examples: <http://docs.python.org/release/2.5.2/lib/minimal-example.html>
 * Python sorting reference: <http://wiki.python.org/moin/HowTo/Sorting/>
 * SickBeard: <https://github.com/midgetspy/Sick-Beard/> Python application on GitHub - module construction, common initialization paradigms, general reference
-* Various Pythonic language idioms/references on StackOverflow; no code was directly copied from any resource, but used mainly as a reference
+* Various Pythonic language idioms/references on StackOverflow including:
+    * <http://stackoverflow.com/questions/6735917/redirecting-stdout-to-nothing-in-python>
 * Google Python style guide for influence: <http://google-styleguide.googlecode.com/svn/trunk/pyguide.html>
     * Specific use of `pychecker` to detect potential issues with code <http://pychecker.sourceforge.net/>
 * PEP-0257 for preferred docstring syntax: <http://www.python.org/dev/peps/pep-0257/>
 * `coverage` module for testing code coverage: <http://nedbatchelder.com/code/coverage/>, running `coverage run test_handcompare.py; coverage report -m` to increase coverage of tests
+    * Over the course of development, using this tool, code coverage increased from 90% to 97% and at least two bugs were discovered and fixed
 
 A recent `coverage` run provided the following results:
 

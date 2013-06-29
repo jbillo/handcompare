@@ -33,4 +33,8 @@ DEFAULT_HANDS = {
     "wp_four_of_a_kind_2"       : "6D,6H,6S,6C,KS",
     "wp_four_of_a_kind_3"       : "10C,10D,10H,10S,QC",
     "wp_four_of_a_kind_4"       : "10C,10D,10H,10S,5D",
+    "wp_full_house_1"           : "10S,10H,10D,4S,4D",
+    "wp_full_house_2"           : "9H,9C,9S,AH,AC",
+    "wp_full_house_3"           : "AS,AC,AH,4D,4C",
+    "wp_full_house_4"           : "AS,AH,AD,3S,3D",
 }

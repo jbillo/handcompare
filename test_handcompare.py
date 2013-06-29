@@ -16,6 +16,7 @@ import hand
 # Specifically import other test cases and inside classes
 from test_cardvalue import *
 from test_hand import *
+from test_coreapp import *
 
 import sys
 
@@ -87,13 +88,14 @@ class TestHandCompare(unittest.TestCase):
         ]
 
         for invalid_card in invalid_cards:
-            self.assertRaises(card.InvalidCardError, self.hc.parse_card_string, invalid_card)
+            self.assertRaises(card.InvalidCardError,
+                              self.hc.parse_card_string, invalid_card)
 
         valid_cards = ["2H", "5S", "10C", "JC", "QD", "KH", "AS"]
         for valid_card in valid_cards:
             self.assertTrue(self.hc.parse_card_string(valid_card))
 
-    def test_hand_sanity(self):
+    def test_hand_sanity_operations(self):
         hand1 = hand.Hand()
         hand2 = hand.Hand()
 
@@ -207,6 +209,14 @@ class TestHandCompare(unittest.TestCase):
 
         hand1 = self.load_default_hand("wp_four_of_a_kind_3")
         hand2 = self.load_default_hand("wp_four_of_a_kind_4")
+        self.assertGreater(hand1, hand2)
+
+        hand1 = self.load_default_hand("wp_full_house_1")
+        hand2 = self.load_default_hand("wp_full_house_2")
+        self.assertGreater(hand1, hand2)
+
+        hand1 = self.load_default_hand("wp_full_house_3")
+        hand2 = self.load_default_hand("wp_full_house_4")
         self.assertGreater(hand1, hand2)
 
     def test_hand_sanity(self):
