@@ -13,12 +13,13 @@ import handcompare
 import card
 import hand
 
-# Specifically import other test cases and inside classes
+# Specifically import other test cases
 from test_cardvalue import *
 from test_hand import *
 from test_coreapp import *
 
 import sys
+
 
 class TestHandCompare(unittest.TestCase):
     def setUp(self):
@@ -134,7 +135,6 @@ class TestHandCompare(unittest.TestCase):
         self.assertFalse(hand1 < hand2)
         self.assertFalse(hand1 == hand2)
 
-
         hand1 = self.load_default_hand("four_of_a_kind")
         hand2 = self.load_default_hand("three_of_a_kind")
         self.assertNotEqual(hand1, hand2)
@@ -174,7 +174,6 @@ class TestHandCompare(unittest.TestCase):
         self.assertNotEqual(hand1, hand2)
         self.assertLess(hand1, hand2)
         self.assertFalse(hand1 > hand2)
-
 
     def test_hand_compare_wikipedia(self):
         """Use specific testcases from Wikipedia article on poker hands."""
@@ -271,7 +270,6 @@ class TestHandCompare(unittest.TestCase):
         hand2 = self.load_default_hand("straight_flush_ace_low")
         self.assertTrue(self.hc.hand_sanity(hand1, hand2))
 
-
 if __name__ == '__main__':
     """
     Empty sys.argv in case this application is accidentally run with hand strings
@@ -281,4 +279,3 @@ if __name__ == '__main__':
 
     sys.argv = [sys.argv[0]]
     unittest.main()
-

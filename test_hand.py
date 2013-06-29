@@ -9,7 +9,7 @@ import unittest
 
 import hand
 import card
-import handcompare
+
 
 class TestHand(unittest.TestCase):
     def setUp(self):
@@ -250,7 +250,7 @@ class TestHand(unittest.TestCase):
         self.assertFalse(self.hand.check_flush())
 
         # construct flush from 2-6
-        for card_value in range (2, 7):
+        for card_value in range(2, 7):
             self.hand.add_card(card.Card(card_value, "H"))
 
         self.assertTrue(self.hand.check_flush())
@@ -360,7 +360,6 @@ class TestHand(unittest.TestCase):
         """
         # Workaround from above - don't include last A card:
         self.assertEqual(self.hand.get_rank(), [13])
-
 
     def test_pair(self):
         """Check that single pair detection is working properly"""

@@ -11,6 +11,7 @@ import os
 
 import handcompare
 
+
 class TestCoreApp(unittest.TestCase):
     def setUp(self):
         """Create local objects used in all testcases."""
@@ -42,10 +43,10 @@ class TestCoreApp(unittest.TestCase):
         # pass lists of 1 and 2 length
         self.assertRaises(handcompare.MissingArgumentError, self.hc.check_argcount, [0])
         self.assertRaises(
-                          handcompare.MissingArgumentError,
-                          self.hc.check_argcount,
-                          [0, 1]
-                          )
+            handcompare.MissingArgumentError,
+            self.hc.check_argcount,
+            [0, 1]
+        )
 
         # with valid parameters, ensure function returns properly
         self.assertTrue(self.hc.check_argcount(basic_pass))
@@ -90,9 +91,11 @@ class TestCoreApp(unittest.TestCase):
         # Check result for verbosity
         sys.argv = ("handcompare.py", "5D,6D,7D,8D,9D", "4C,5C,6C,7C,8C", "--verbose")
         self.hc.main()
-        self.assertEqual(self.hc.verbose_output,
+        self.assertEqual(
+            self.hc.verbose_output,
             ("Hand 1: Straight Flush, multiple 0, rank [9, 8, 7, 6, 5]\n"
-             "Hand 2: Straight Flush, multiple 0, rank [8, 7, 6, 5, 4]\n\n"))
+             "Hand 2: Straight Flush, multiple 0, rank [8, 7, 6, 5, 4]\n\n")
+        )
 
         # Reset sys.argv as all tests are done
         sys.argv = old_argv

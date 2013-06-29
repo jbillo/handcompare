@@ -10,6 +10,7 @@ import unittest
 import handcompare
 import card
 
+
 class TestCardValue(unittest.TestCase):
     def setUp(self):
         """Designate shared objects for all test cases."""
