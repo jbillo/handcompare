@@ -35,6 +35,9 @@ class HandCompare(object):
     # Define the typical/maximum number of cards in the hand.
     CARDS_IN_HAND = 5
 
+    # Define verbose output string for verbosity testing.
+    verbose_output = ""
+
     def check_argcount(self, system_args):
         """
         Checks the number of arguments passed on the command line.
@@ -122,6 +125,9 @@ class HandCompare(object):
         and outputs a comparison (hand 1 vs hand 2.)
         """
 
+        # Verbosity; use integer in case we want multiple levels later (-v, debug, etc).
+        verbosity = 0
+
         # Check argument count passed on command line
         try:
             self.check_argcount(sys.argv)
@@ -150,17 +156,42 @@ class HandCompare(object):
                       "use the --no-sanity option.")
                 self.usage()
 
+        # Check for verbosity level
+        if "--verbose" in sys.argv:
+            verbosity = 1
+
         # Compare hands and print output
         if hand1 > hand2:
             print "Hand 1 is the winning hand"
+            self.verbose_hand_details(verbosity, hand1, hand2)
             return HAND1_WINS
         elif hand2 > hand1:
             print "Hand 2 is the winning hand"
+            self.verbose_hand_details(verbosity, hand1, hand2)
             return HAND2_WINS
         else:
             print "Hand 1 and 2 draw"
+            self.verbose_hand_details(verbosity, hand1, hand2)
             return HANDS_DRAW
 
+    def verbose_hand_details(self, verbosity, hand1, hand2):
+        """Print verbose information about contents (types) of hands."""
+        if verbosity == 0:
+            return
+
+        # Provide user with details on hands. We don't need to know which one
+        # won in this context, just the attributes that caused a win. Also, replace
+        # underscores with spaces and title case for readability.
+
+        self.verbose_output = "Hand 1: {0}, multiple {1}, rank {2}\n".format(
+              hand1.get_type_text().replace("_", " ").title(), hand1.get_multiple(),
+              hand1.get_rank())
+
+        self.verbose_output += "Hand 2: {0}, multiple {1}, rank {2}\n\n".format(
+            hand2.get_type_text().replace("_", " ").title(), hand2.get_multiple(),
+            hand2.get_rank())
+
+        print self.verbose_output
 
     def usage(self):
         """
@@ -180,6 +211,9 @@ Current options include:
                 were drawing from each of their own 52 card decks.
                 This option is exposed for consistency as the test suite does
                 not enforce the "unique cards" restriction when comparing hands.
+
+--verbose       Output details on hand comparison, including attributes, multiple
+                and type for each of the hands.
         """.format(sys.argv[0])
 
         sys.exit(1)

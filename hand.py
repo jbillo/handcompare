@@ -66,10 +66,10 @@ class Hand(object):
 
     """
     Cache for hand types that can be returned. Only generate once per object.
-    We do this because we need to enforce ordering with the tuple, and rather
+    The tuple itself enforces descending winning order, and rather
     than iterating through the tuple/pairs each time to get a type string,
-    (or using something like keys.sort() on a dict every time)
-    we cache a dict of key=(integer of type), value=(string of type).
+    (or using something like keys.sort() on a dict every time), cache a dict of
+    key=(integer of type), value=(string of type).
     This gets populated in the __init__ constructor.
     """
     HAND_TYPE_TEXT = {}
@@ -276,16 +276,19 @@ class Hand(object):
         full.
         """
 
-        # This is not conventional Python; we could check attributes instead
-        # (philosophy of duck typing) and only error if needed properties not found
+        """
+        This is not conventional Python; an alternate approach could be to check
+        attributes for validity instead (philosophy of duck typing)
+        and only error if needed properties not found.
+        """
         if not isinstance(card_obj, card.Card):
             raise ValueError("Must provide Card object to Hand")
 
-        # check if card is already in list and raise error if so
+        # Check if card is already in list and raise error if so
         if self.has_exact_card(card_obj):
             raise DuplicateCardError("Card already exists in this hand")
 
-        # check if we are already at the maximum number of cards
+        # Check if the maximum number of cards has been reached
         if len(self.cards) == self.MAXIMUM_CARDS:
             raise MaximumCardError("Already have {0} cards in this hand".format(
                 self.MAXIMUM_CARDS))
@@ -293,8 +296,8 @@ class Hand(object):
         self.cards.append(card_obj)
         self.sort_cards()
 
-        # if we have the maximum number of cards now, determine hand type
-        # this sets ranking, multiple and
+        # If the maximum number of cards is reached now, determine hand type.
+        # This sets ranking and multiple as well.
         if len(self.cards) == self.MAXIMUM_CARDS:
             self.get_hand_type()
 
@@ -320,8 +323,8 @@ class Hand(object):
             In this case, the hand will never get set to the designated type as it can't
             be checked for.
 
-            This statement will not get exercised by automated testing as we define all
-            the possible hand functions in this file.
+            This statement will not get exercised by automated testing as all
+            the possible hand functions are defined in this file.
             """
 
             if not getattr(self, "check_{0}".format(type_name)):
@@ -365,18 +368,18 @@ class Hand(object):
 
     def check_full_house(self):
         """Check if the card contains a full house (1 three of a kind and 1 pair.)"""
-        # definition: three matching cards of one value + two matching cards of another
+        # Definition: three matching cards of one value + two matching cards of another
         if not self.cards or not len(self.cards) == self.MAXIMUM_CARDS:
             return False
 
         card_values = self.get_card_values()
 
-        # check that we have two unique card values only to fail quickly
+        # Check that there are two unique card values only to fail quickly
         unique_values = self.get_unique_card_values()
         if len(unique_values) != 2:
             return False
 
-        # check occurrences: 3x one value, 2x other value
+        # Check occurrences: 3x one value, 2x other value
         unique_value_test = list(unique_values)
         value1 = unique_value_test[0]
         value2 = unique_value_test[1]
@@ -394,8 +397,8 @@ class Hand(object):
 
     def check_flush(self):
         """Check if the hand contains a flush (all cards same suit)."""
-        # definition: all cards same suit, high card wins
-        # this means we have to drop the entire sequence into rank
+        # Definition: all cards same suit, high card wins
+        # Will need to drop the entire sequence into the rank list.
         if not self.cards or not len(self.cards) == self.MAXIMUM_CARDS:
             return False
 
@@ -408,8 +411,8 @@ class Hand(object):
         if len(card_suits) != 1:
             return False
 
-        # we know this is a flush of some type; set multiple and rank accordingly
-        # ace should always act as a high card
+        # This is a flush of some type; set multiple and rank accordingly
+        # Ace should always act as a high card
         self.multiple = 0
         self.set_rank_by_values()
 
@@ -417,12 +420,12 @@ class Hand(object):
 
     def check_straight(self):
         """Check if the hand contains a straight (sequential-valued cards)."""
-        # condition 1: ace low (A = 1) - will appear as exactly 2, 3, 4, 5, 14 in values
-        # condition 2: normal, no aces or ace high (A = 14)
+        # Condition 1: ace low (A = 1) - will appear as exactly 2, 3, 4, 5, 14 in values
+        # Condition 2: normal, no aces or ace high (A = 14)
         if not self.cards or not len(self.cards) == self.MAXIMUM_CARDS:
             return False
 
-        # we can test explicitly for condition 1:
+        # Test explicitly for condition 1:
         ace_low = True
         ace_low_values = [2, 3, 4, 5, 14]
         for card_index in range(0, len(self.cards)):
@@ -430,7 +433,7 @@ class Hand(object):
                 ace_low = False
                 break
 
-        # if we have an ace low condition, rank is always 5
+        # if an ace low condition exists, rank is always 5
         # and type will be straight flush. Overwrite ace as 1.
         if ace_low:
             self.multiple = 0
@@ -463,7 +466,7 @@ class Hand(object):
         unique_values = self.get_unique_card_values()
 
         # Check the number of occurrences of each unique card value.
-        # If greater or equal to "N-of-a-kind", we have this condition satisfied
+        # If greater or equal to "N-of-a-kind", this condition is satisfied
         for value in unique_values:
             if card_values.count(value) >= n:
                 # Set the multiple property to the card value seen N or more times
@@ -487,7 +490,7 @@ class Hand(object):
 
         unique_values = self.get_unique_card_values()
 
-        # We could try to exit early here by checking the len(unique_values) < 2,
+        # Could try to exit early here by checking the len(unique_values) < 2,
         # but the hand must have at least four cards and will therefore always
         # have at least two unique values.
 
@@ -498,10 +501,12 @@ class Hand(object):
         # For each unique value, check that there is at least 2 of a kind for 2 of them
         pairs = self.get_pairs()
 
-        # The len(unique_values) statement above enforces one, two or three unique
-        # card values. As such, len(pairs) will always return 2 here. Again, a possible
-        # place for a consistency check, but the statement above enforces it in a 5 card
-        # deck.
+        """
+        The len(unique_values) statement above enforces one, two or three unique
+        card values. As such, len(pairs) will always return 2 here. Again, a possible
+        place for a consistency check, but the statement above enforces it in a 5 card
+        deck.
+        """
 
         # Which is the highest pair? This becomes the 'multiple' property
         # Then the other pair, followed by highest card, goes into rank
@@ -509,8 +514,8 @@ class Hand(object):
         self.multiple = pairs[0]
         self.rank = [pairs[1]]
 
-        # If we have a third value (fifth card), append it to the rank
-        # As there will only be one card left, we can use the unique set and just
+        # If a third value (fifth card) is present, append it to the rank
+        # As there will only be one card left, use the unique set and just
         # add one value to the end.
         unique_values.remove(self.multiple)
         unique_values.remove(self.rank[0])
@@ -549,7 +554,7 @@ class Hand(object):
         if not pairs or len(pairs) < 1:
             return False
 
-        # At this point, we could still have two pairs, but this should not affect
+        # At this point, could still have two pairs, but this should not affect
         # normal program operation. See considerations in test suite.
 
         # Take first pair as multiple
@@ -570,7 +575,7 @@ class Hand(object):
         if not self.cards or not len(self.cards) == self.MAXIMUM_CARDS:
             return False
 
-        # We always at least have a high card in this case.
+        # Always at least have a high card in this case.
         card_values = self.get_card_values()
         card_values.sort(reverse=True)
         self.multiple = 0

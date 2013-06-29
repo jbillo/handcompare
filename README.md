@@ -45,6 +45,9 @@ Current options include:
                     This option is exposed for consistency as the test suite does
                     not enforce the "unique cards" restriction when comparing hands.
 
+    --verbose       Output details on hand comparison, including type, multiple
+                    and ranking for each of the hands.
+
 For an example use of the `--no-sanity` parameter to check two straight flushes:
 
     python /path/to/handcompare/handcompare.py 10C,JC,QC,KC,AC 10H,JH,QH,KH,AH
@@ -53,6 +56,16 @@ Output:
 
     Hand 1 and 2 draw
 
+Example output when using the `--verbose` parameter to indicate hand properties:
+
+    python /path/to/handcompare/handcompare.py 2C,3H,4D,5S,10C 10D,JD,QD,KD,AD --verbose
+
+Output:
+
+    Hand 2 is the winning hand
+    Hand 1: High Card, multiple 0, rank [10, 5, 4, 3, 2]
+    Hand 2: Straight Flush, multiple 0, rank [14, 13, 12, 11, 10]
+
 # Testing and integration with build system
 
 Run the following command:
@@ -60,6 +73,14 @@ Run the following command:
     python /path/to/handcompare/test_handcompare.py
 
 Output will be in standard Python `unittest` format, with the last output line as the string `OK` if all tests passed.
+
+# Other inclusions and support mechanisms
+
+For debugging, I used the content in `generate_hands.py` to enumerate the hands in `default_hands` and output appropriate command lines for checking card attributes. I then performed a manual sanity comparison between Hand 1 and Hand 2. Example, in the handcompare working directory:
+
+    ./generate_hands.py > generate_hands.txt
+    sh generate_hands.txt > generate_hands.out
+    vi generate_hands.out
 
 # Assumptions
 

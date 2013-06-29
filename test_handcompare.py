@@ -31,26 +31,8 @@ class TestHandCompare(unittest.TestCase):
         del self.hand
         del self.card
 
-    def test_check_argcount(self):
-        # check argument count for 0, 1 and 2 parameters
-        basic_pass = ["app_name", "hand1", "hand2"]
-
-        # for sys.argv is None, the function should fail preemptively
-        self.assertRaises(TypeError, self.hc.check_argcount)
-
-        # pass lists of 1 and 2 length
-        self.assertRaises(handcompare.MissingArgumentError, self.hc.check_argcount, [0])
-        self.assertRaises(
-                          handcompare.MissingArgumentError,
-                          self.hc.check_argcount,
-                          [0, 1]
-                          )
-
-        # with valid parameters, ensure function returns properly
-        self.assertTrue(self.hc.check_argcount(basic_pass))
-
     def test_parse_hand_string(self):
-        # ensure that the hands are valid strings with appropriate content:
+        """Tests to ensure that the hands are valid strings with appropriate content."""
 
         # check for None and empty string cases,
         # padded strings that compress down to nothing
@@ -65,7 +47,8 @@ class TestHandCompare(unittest.TestCase):
         self.assertIsInstance(result, hand.Hand)
 
     def test_parse_card_string(self):
-        # ensure the card is a valid string with appropriate content
+        """Tests to ensure the card is a valid string with appropriate content."""
+
         invalid_cards = [
             None,
             "",
@@ -96,6 +79,7 @@ class TestHandCompare(unittest.TestCase):
             self.assertTrue(self.hc.parse_card_string(valid_card))
 
     def test_hand_sanity_operations(self):
+        """Check that hand sanity methods raise appropriate exceptions."""
         hand1 = hand.Hand()
         hand2 = hand.Hand()
 
@@ -109,13 +93,13 @@ class TestHandCompare(unittest.TestCase):
         self.assertRaises(handcompare.InvalidHandError, self.hc.hand_sanity, hand1, hand2)
 
     def load_default_hand(self, hand):
-        # Return a Hand object for comparison purposes.
+        """Return a Hand object from the default_hands dict for comparison purposes."""
         import default_hands
         return self.hc.parse_hand_string(default_hands.DEFAULT_HANDS[hand])
 
     def test_hand_compare(self):
         """
-        First block of standard hand comparisons. These should not throw exceptions or
+        Standard hand comparisons. These should not throw exceptions or
         errors, but be an example of when one hand would win out over another.
         """
 
@@ -142,7 +126,7 @@ class TestHandCompare(unittest.TestCase):
         self.assertFalse(hand2 < hand1)
 
         # Check gt operator for sampling of hands
-        # Also test comparisons we know to be false to exercise early exits
+        # Also test comparisons known to be false to exercise early exits
         hand1 = self.load_default_hand("royal_flush")
         hand2 = self.load_default_hand("straight_flush")
         self.assertNotEqual(hand1, hand2)
@@ -166,7 +150,7 @@ class TestHandCompare(unittest.TestCase):
         self.assertFalse(hand1 == hand2)
 
         # Check le operator for sampling of hands
-        # Also test comparisons we know to be false to exercise early exits
+        # Also test comparisons known to be false to exercise early exits
         hand1 = self.load_default_hand("full_house")
         hand2 = self.load_default_hand("four_of_a_kind")
         self.assertNotEqual(hand1, hand2)
@@ -193,7 +177,7 @@ class TestHandCompare(unittest.TestCase):
 
 
     def test_hand_compare_wikipedia(self):
-        # TODO: Use specific testcases from Wikipedia article
+        """Use specific testcases from Wikipedia article on poker hands."""
 
         hand1 = self.load_default_hand("wp_straight_flush_1")
         hand2 = self.load_default_hand("wp_straight_flush_2")
@@ -201,6 +185,7 @@ class TestHandCompare(unittest.TestCase):
 
         hand1 = self.load_default_hand("wp_straight_flush_3")
         hand2 = self.load_default_hand("wp_straight_flush_4")
+        # these are specifically equal
         self.assertEqual(hand1, hand2)
 
         hand1 = self.load_default_hand("wp_four_of_a_kind_1")
@@ -288,9 +273,12 @@ class TestHandCompare(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # Empty sys.argv in case this application is accidentally run with hand strings
-    # or other arguments specified - Python's unit testing mechanism will attempt to
-    # run specific test cases
+    """
+    Empty sys.argv in case this application is accidentally run with hand strings
+    or other arguments specified - Python's unit testing mechanism will attempt to
+    run specific test cases if sys.argv contains items.
+    """
+
     sys.argv = [sys.argv[0]]
     unittest.main()
 

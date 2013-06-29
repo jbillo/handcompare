@@ -147,7 +147,7 @@ class TestHand(unittest.TestCase):
                          "[(2, 'D'), (3, 'C'), (4, 'S'), (5, 'H'), (7, 'D')]")
 
     def test_n_of_a_kind(self):
-        """Check that n-of-a-kind provides correct errors - we check 4 and 3 below."""
+        """Check that n-of-a-kind provides correct errors - check 4 and 3 below."""
         self.hand.clear()
         self.assertFalse(self.hand.check_n_of_a_kind(4))
         self.set_three_of_a_kind()
@@ -173,7 +173,7 @@ class TestHand(unittest.TestCase):
         self.hand.add_card(card.Card("J", "S"))
         self.hand.add_card(card.Card("Q", "S"))
 
-        # check that we have a straight flush with 8-Q
+        # check that the result is a straight flush with 8-Q
         self.assertTrue(self.hand.check_straight_flush())
 
         # check multiple and rank
@@ -206,7 +206,7 @@ class TestHand(unittest.TestCase):
         for card_suit in ["C", "D", "H", "S"]:
             self.hand.add_card(card.Card(2, card_suit))
 
-        # At this point we should get a false, since there are only 4 cards
+        # At this point False should be returned, since there are only 4 cards
         self.assertFalse(self.hand.check_four_of_a_kind())
 
         self.hand.add_card(card.Card(3, "D"))
@@ -274,7 +274,7 @@ class TestHand(unittest.TestCase):
             self.hand.add_card(card.Card(card_value, "D"))
         self.hand.add_card(card.Card(10, "S"))
 
-        # check straight - rank and multiple don't get set if we haven't checked
+        # check straight - rank and multiple don't get set if check has not been run
         self.assertTrue(self.hand.check_straight())
 
         # check rank and multiple
@@ -350,9 +350,9 @@ class TestHand(unittest.TestCase):
         """
         Limitation: get_rank() will only return a one-element list for a full house,
         whereas the second element in this example (AAAKK) should be the remaining
-        ace card (numerical value of 14). We could account for this, but the compare
-        condition will never be encountered. A full house always beats two pair and
-        when comparing two full houses, the 3-up card will be taken as the multiple.
+        ace card (numerical value of 14). It is possible to account for this, but the
+        compare condition will never be encountered. A full house always beats two pair
+        and when comparing two full houses, the 3-up card will be taken as the multiple.
 
         For example, this will fail:
         self.assertEqual(self.hand.get_rank(), [13, 14])
@@ -387,9 +387,10 @@ class TestHand(unittest.TestCase):
         self.assertEqual(self.hand.get_multiple(), 3)
 
         """
-        We run into the same limitation as two pair: both two pair and three of a kind
-        will have different rank patterns not caught by this function. Again, provided
-        that we always run in descending order of hand types, comparison will succeed.
+        This function has the same limitation as two pair: both two pair and three of a
+        kind will have different rank patterns not caught by this function. Provided
+        that the program always runs in descending order of hand types, comparison will
+        succeed.
         """
 
         # Check false for non-pair scenario
