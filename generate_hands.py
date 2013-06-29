@@ -1,9 +1,8 @@
 #!/usr/bin/env python
 
-# This script generates command lines appropriate for
+# This script generates command lines appropriate for hand comparison
 
 import default_hands
-import handcompare
 
 if __name__ == '__main__':
     hand_values = default_hands.DEFAULT_HANDS.values()
