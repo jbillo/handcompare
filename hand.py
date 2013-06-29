@@ -7,25 +7,31 @@ the handcompare application.
 
 import card
 
+
 class DuplicateCardError(Exception):
     """Thrown when a card already exists in this Hand object."""
     pass
+
 
 class MissingCardError(Exception):
     """Thrown when this Hand object does not have enough cards to determine a type."""
     pass
 
+
 class MaximumCardError(Exception):
     """Thrown when this Hand object already has the maximum amount of cards."""
     pass
+
 
 class CompareError(Exception):
     """Thrown when an error occurred comparing two rankings of hands."""
     pass
 
+
 class CheckFunctionError(Exception):
     """Thrown when a hand type is defined, but no corresponding check_ function exists."""
     pass
+
 
 class Hand(object):
     """
@@ -236,8 +242,8 @@ class Hand(object):
     def get_card_values(self):
         """Return values of cards in a list; list will be sorted"""
         card_values = []
-        for card in self.cards:
-            card_values.append(card.get_value())
+        for card_obj in self.cards:
+            card_values.append(card_obj.get_value())
 
         return card_values
 
@@ -262,8 +268,11 @@ class Hand(object):
         this exact card (value and suit).
         """
 
-        for card in self.cards:
-            if card.value == card_obj.get_value() and card.suit == card_obj.get_suit():
+        for test_card in self.cards:
+            if (
+                test_card.value == card_obj.get_value() and
+                test_card.suit == card_obj.get_suit()
+            ):
                 return True
 
         return False
@@ -584,4 +593,3 @@ class Hand(object):
         self.rank = card_values
 
         return True
-
