@@ -11,8 +11,8 @@ Other work and contributions available at <http://github.com/jbillo>
 
 # Requirements
 
-* Python 2.7.x (not compatible with Python3)
-    * Tested on OS X 10.8.3/Python 2.7.2
+* Python 2.7.x (not specifically compatible with Python3)
+    * Tested on OS X 10.8.3/Python 2.7.2 and Ubuntu 12.04/Python 2.7.3
 
 # Usage
 
