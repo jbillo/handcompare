@@ -78,8 +78,8 @@ Output will be in standard Python `unittest` format, with the last output line a
 
 For debugging, I used the content in `generate_hands.py` to enumerate the hands in `default_hands` and output appropriate command lines for checking card attributes. I then performed a manual sanity comparison between Hand 1 and Hand 2. Example, in the handcompare working directory:
 
-    ./generate_hands.py > generate_hands.txt
-    sh generate_hands.txt > generate_hands.out
+    ./generate_hands.py > generate_hands.sh
+    sh generate_hands.sh > generate_hands.out
     vi generate_hands.out
 
 # Assumptions and possible improvements

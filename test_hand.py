@@ -327,6 +327,7 @@ class TestHand(unittest.TestCase):
 
         # check multiple and rank
         self.assertEqual(self.hand.get_multiple(), 9)
+        # Rank will not be reverse sorted: element 2 will be the second highest pair.
         self.assertEqual(self.hand.get_rank(), [8, 13])
 
         # check one pair hand - should be false

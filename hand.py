@@ -522,6 +522,8 @@ class Hand(object):
         if len(unique_values) != 0:
             self.rank.append(unique_values.pop())
 
+        # Note that the rank list should *not* be reverse sorted here, since the
+        # first element in a 2-pair list will be the second pair.
         return True
 
     def get_pairs(self):
