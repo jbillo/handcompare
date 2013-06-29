@@ -392,13 +392,6 @@ class TestHand(unittest.TestCase):
         self.assertEquals(self.hand.get_multiple(), 0)
         self.assertEquals(self.hand.get_rank(), [7, 5, 4, 3, 2])
 
-    def test_get_hand_type(self):
-        # TODO: explicitly pass or fail this test with asserts
-        # check all types in default types
-        import default_hands
-        for value in default_hands.DEFAULT_HANDS.values():
-            self.hand = handcompare.HandCompare().parse_hand_string(value)
-
     def test_check_rank_consistency(self):
         # Check rank consistency with mocked up hands
         hand1 = hand.Hand()
