@@ -128,6 +128,18 @@ class TestHand(unittest.TestCase):
         self.set_bad_hand()
         self.assertEqual(self.hand.get_hand_type(), 0)
 
+    def test_type_text(self):
+        """Check that get_hand_type_text() returns the proper value."""
+
+        # Override the hand - check for a non-existent key
+        self.hand.clear()
+        self.hand.type = -1
+        self.assertFalse(self.hand.get_type_text())
+
+        # Check hand text for three of a kind
+        self.set_three_of_a_kind()
+        self.assertEqual(self.hand.get_type_text(), "three_of_a_kind")
+
     def test_hand_repr(self):
         """Check that the string representation of the hand matches expected value"""
         self.set_bad_hand()

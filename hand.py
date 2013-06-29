@@ -64,6 +64,16 @@ class Hand(object):
         ("high_card", 0),
     )
 
+    """
+    Cache for hand types that can be returned. Only generate once per object.
+    We do this because we need to enforce ordering with the tuple, and rather
+    than iterating through the tuple/pairs each time to get a type string,
+    (or using something like keys.sort() on a dict every time)
+    we cache a dict of key=(integer of type), value=(string of type).
+    This gets populated in the __init__ constructor.
+    """
+    HAND_TYPE_TEXT = {}
+
     def __repr__(self):
         """Representation: return the card list as a string for parsing"""
         return str(self.cards)
@@ -71,6 +81,12 @@ class Hand(object):
     def __init__(self):
         """Constructor: Clear the card list at initialization"""
         self.clear()
+        self._create_hand_type_cache()
+
+    def _create_hand_type_cache(self):
+        """Create a caching dict to retrieve hand type text based on values."""
+        for hand_type in self.HAND_TYPES:
+            self.HAND_TYPE_TEXT[hand_type[1]] = hand_type[0]
 
     def __gt__(self, other):
         """> operator: Determine if this hand wins over another."""
@@ -199,6 +215,15 @@ class Hand(object):
     def get_type(self):
         """Accessor: get type property"""
         return self.type
+
+    def get_type_text(self):
+        """Accessor/helper: return text version of type"""
+
+        # Check that this type is actually defined in the type text cache.
+        if not self.type in self.HAND_TYPE_TEXT.keys():
+            return False
+
+        return self.HAND_TYPE_TEXT[self.type]
 
     def get_multiple(self):
         """Accessor: return multiple property"""
