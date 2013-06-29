@@ -125,7 +125,7 @@ class HandCompare(object):
         and outputs a comparison (hand 1 vs hand 2.)
         """
 
-        # Verbosity; use integer in case we want multiple levels later (-v, debug, etc).
+        # Verbosity; use integer in case multiple levels needed later (--debug, etc).
         verbosity = 0
 
         # Check argument count passed on command line
@@ -179,7 +179,7 @@ class HandCompare(object):
         if verbosity == 0:
             return
 
-        # Provide user with details on hands. We don't need to know which one
+        # Provide user with details on hands. Don't need to know which hand
         # won in this context, just the attributes that caused a win. Also, replace
         # underscores with spaces and title case for readability.
 

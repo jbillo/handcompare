@@ -57,7 +57,7 @@ class TestCoreApp(unittest.TestCase):
         old_argv = sys.argv
         sys.argv = [sys.argv[0]]
 
-        # Ensure that when we run this application without parameters, we get an exit.
+        # Ensure that when application runs without parameters, it attempts to exit.
         # Catch this exit and don't actually terminate the program.
         self.assertRaises(SystemExit, self.hc.main)
 
@@ -69,7 +69,7 @@ class TestCoreApp(unittest.TestCase):
         sys.argv = ("handcompare.py", "5C,5C,6C,7C,8C", "4D,5D,6D,7D,8D")
         self.assertRaises(SystemExit, self.hc.main)
 
-        # By default we enforce sanity checking - confirm that same card across hands
+        # By default sanity checking enforced - confirm that same card across hands
         # exits the application
         sys.argv = ("handcompare.py", "5C,6C,7C,8C,9C", "5C,4H,5H,6H,7H")
         self.assertRaises(SystemExit, self.hc.main)
@@ -92,7 +92,7 @@ class TestCoreApp(unittest.TestCase):
         self.hc.main()
         self.assertEqual(self.hc.verbose_output,
             ("Hand 1: Straight Flush, multiple 0, rank [9, 8, 7, 6, 5]\n"
-             "Hand 2: Straight Flush, multiple 0, rank [8, 7, 6, 5, 4]"))
+             "Hand 2: Straight Flush, multiple 0, rank [8, 7, 6, 5, 4]\n\n"))
 
         # Reset sys.argv as all tests are done
         sys.argv = old_argv
